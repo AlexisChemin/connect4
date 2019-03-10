@@ -1,3 +1,4 @@
+import org.junit.Assert.assertThat
 import kotlin.test.assertEquals
 import org.junit.Test as test
 
@@ -7,5 +8,6 @@ class TestSource {
         val greeting = example.greeting
 
         assertEquals("Hi", greeting)
+
     }
 }
