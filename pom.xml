@@ -10,9 +10,12 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>1.0.3</kotlin.version>
+        <!--<kotlin.version>1.0.3</kotlin.version>-->
+        <assertk.version>0.13</assertk.version>
+        <kotlin.version>1.2.10</kotlin.version>
         <junit.version>4.12</junit.version>
-        <main.class>hello.HelloKt</main.class>
+        <!--<main.class>hello.HelloKt</main.class>-->
+        <main.class>app</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -33,6 +36,12 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit</artifactId>
             <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.willowtreeapps.assertk</groupId>
+            <artifactId>assertk-jvm</artifactId>
+            <version>${assertk.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
