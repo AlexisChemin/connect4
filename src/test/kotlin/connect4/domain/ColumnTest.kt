@@ -64,7 +64,7 @@ class ColumnTest {
 
 
     @Test
-    fun disk_at_position_below_height_can_be_retrieve() {
+    fun disk_at_position_below_height_is_not_null() {
         // GIVEN
         //              a three Disks Column
         val column = Column()
@@ -75,9 +75,9 @@ class ColumnTest {
 
         // WHEN
         //              get disks
-        val disk0 = column.getDiskAt(0)
-        val disk1 = column.getDiskAt(1)
-        val disk2 = column.getDiskAt(2)
+        val disk0 = column.getDiskAt(RowIndex.ROW_0)
+        val disk1 = column.getDiskAt(RowIndex.ROW_1)
+        val disk2 = column.getDiskAt(RowIndex.ROW_2)
 
         // THEN
         assertThat(disk0).isEqualTo(Disk.YELLOW)
@@ -99,8 +99,8 @@ class ColumnTest {
 
         // WHEN
         //              get disks from position 3
-        val disk3 = column.getDiskAt(3)
-        val disk4 = column.getDiskAt(4)
+        val disk3 = column.getDiskAt(RowIndex.ROW_3)
+        val disk4 = column.getDiskAt(RowIndex.ROW_4)
 
         // THEN
         assertThat(disk3).isNull()
@@ -110,19 +110,24 @@ class ColumnTest {
 
 
 
-    @Test(expected = IndexOutOfBoundsException::class)
-    fun could_not_get_disk_at_position_over_or_equals_to_ColumnHeight() {
-        // GIVEN
 
-        //              a one Disk Column
+    @Test
+    fun clear_should_remove_all_disks_from_columns() {
+        // GIVEN
+        //              a three Disks Column
         val column = Column()
         column.insertDisk(Disk.YELLOW)
-
+        column.insertDisk(Disk.RED)
+        column.insertDisk(Disk.YELLOW)
 
         // WHEN
-        column.getDiskAt(ColumnHeight)
+        column.clear()
 
         // THEN
-        //              exception thrown
+        assertThat(column.isEmpty())
+        assertThat(column.height()).isEqualTo(0)
     }
+
+
+
 }
