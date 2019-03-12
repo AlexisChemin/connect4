@@ -5,6 +5,15 @@ package connect4.domain
  * Created by vagrant on 3/12/19.
  */
 
+
+enum class AlignmentDirection {
+    Horizontal,
+    Vertical,
+    UpLeftDownRight,
+    DownLeftUpRight
+}
+
+data class Alignment(var start : GridPosition, var direction : AlignmentDirection, var size : Int)
 data class Alignments(var upperDiagonal : Int, var leftHorizontal : Int, var lowerDiagnoal : Int, var downVertical : Int)
 
 val NoAlignment = Alignments(0,0,0,0)

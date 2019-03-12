@@ -21,6 +21,8 @@ enum class ColumnIndex {
     COLUMN_6,
 }
 
+typealias GridPosition = Pair<ColumnIndex, RowIndex>
+
 @JvmField val ColumnHeight = RowIndex.values().size
 
 @JvmField val GridWidth = ColumnIndex.values().size
