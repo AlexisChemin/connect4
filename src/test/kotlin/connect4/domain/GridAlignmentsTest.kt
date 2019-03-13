@@ -15,7 +15,7 @@ class GridAlignmentsTest {
         val grid = Grid()
 
         // WHEN
-        var alignments = GridAlignments(grid)
+        var alignments = GridAlignments(grid).result
 
         // THEN
         assertThat(alignments).isNotNull()
@@ -31,7 +31,7 @@ class GridAlignmentsTest {
 //        givenRow(grid,  " ", "Y", "R", "Y", " ", " ", " "  )
 
         // WHEN
-        var alignments = GridAlignments(grid)
+        var alignments = GridAlignments(grid).result
 
         // THEN
         assertThat(alignments).isNotNull()
