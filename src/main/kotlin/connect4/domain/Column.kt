@@ -13,7 +13,7 @@ class Column {
 
 
     fun insertDisk(disk: Disk) {
-        if (height() >= ColumnHeight) {
+        if (isFull()) {
             throw IndexOutOfBoundsException()
         }
         disks.push(disk)
@@ -43,6 +43,10 @@ class Column {
 
     fun clear() {
         disks.clear()
+    }
+
+    inline fun isFull(): Boolean {
+        return height() >= ColumnHeight
     }
 
 }

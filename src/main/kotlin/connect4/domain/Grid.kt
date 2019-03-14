@@ -29,6 +29,9 @@ class Grid {
         return columns.sumBy { it.height() }
     }
 
+    fun isFull(): Boolean {
+        return columns.all { it.isFull() }
+    }
 
 }
 
