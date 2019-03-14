@@ -1,5 +1,6 @@
 package connect4.domain
 
+import java.lang.RuntimeException
 
 
 class Grid {
@@ -74,6 +75,16 @@ class GridBuilder {
         return this
     }
 
+    fun r(rowString : String) : GridBuilder {
+        val diskList = rowString.trim().split("|")
+        if (diskList.size != 9) {
+            throw RuntimeException("please provide a row line like \"   | R |   |   |   |   |   | Y |   \"")
+        }
+        val row : Array<Disk?> = diskList.subList(1,8).map{ stringToDisk(it) }.toTypedArray()
+        rows.add(row)
+        return this
+    }
+
     fun build() : Grid {
         val grid = Grid()
         rows.reversed().forEach {
@@ -89,7 +100,7 @@ class GridBuilder {
     }
 
     private fun stringToDisk(s: String): Disk? {
-        return when(s) {
+        return when(s.trim()) {
             "R" -> Disk.RED
             "Y" -> Disk.YELLOW
             else -> null

@@ -13,7 +13,7 @@ class GridTest {
 
 
     @Test
-    fun a_new_Grid_is_empty() {
+    fun `a new Grid should be empty`() {
         // GIVEN
 
         // WHEN
@@ -26,7 +26,7 @@ class GridTest {
 
 
     @Test
-    fun should_be_able_to_insert_single_disk() {
+    fun `should be able to insert a disk in a Grid`() {
         // GIVEN
         val grid = Grid()
 
@@ -40,7 +40,7 @@ class GridTest {
 
 
     @Test
-    fun should_be_able_to_insert_several_disks() {
+    fun `should be able to insert serveral disks in a Grid`() {
         // GIVEN
         val grid = Grid()
 
@@ -57,7 +57,7 @@ class GridTest {
 
 
     @Test
-    fun disk_at_given_position_can_be_retrieve() {
+    fun `should be able to get the disk at given position`() {
         // GIVEN
         //              a three Disks Grid
         val grid = Grid()
@@ -82,7 +82,7 @@ class GridTest {
 
 
     @Test
-    fun disk_at_position_over_or_equal_to_column_height_is_null() {
+    fun `should return null when getting a disk at a position over -column's height-`() {
         // GIVEN
         //              a three Disks Column
         val grid = Grid()

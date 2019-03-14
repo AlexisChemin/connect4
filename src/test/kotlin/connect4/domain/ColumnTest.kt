@@ -12,7 +12,7 @@ class ColumnTest {
 
 
     @Test
-    fun a_new_Column_is_empty_and_has_a_height_of_zero() {
+    fun `a new Column is empty and its size is 0`() {
         // GIVEN
 
         // WHEN
@@ -26,7 +26,7 @@ class ColumnTest {
 
 
     @Test
-    fun should_be_able_to_insert_disks() {
+    fun `should be able to insert disks within column`() {
         // GIVEN
         val column = Column()
 
@@ -43,7 +43,7 @@ class ColumnTest {
 
 
     @Test(expected = IndexOutOfBoundsException::class)
-    fun could_not_insert_more_than_ColumnHeight_disk() {
+    fun `could not insert more than -ColumnHeight- disks`() {
         // GIVEN
 
         //              a filled up column
@@ -64,7 +64,7 @@ class ColumnTest {
 
 
     @Test
-    fun disk_at_position_below_height_is_not_null() {
+    fun `getting a disk below -column's height- returns a non null disk`() {
         // GIVEN
         //              a three Disks Column
         val column = Column()
@@ -88,7 +88,7 @@ class ColumnTest {
 
 
     @Test
-    fun disk_at_position_over_or_equal_to_height_is_null() {
+    fun `getting a disk over -column's height- returns null`() {
         // GIVEN
         //              a three Disks Column
         val column = Column()
@@ -112,7 +112,7 @@ class ColumnTest {
 
 
     @Test
-    fun clear_should_remove_all_disks_from_columns() {
+    fun `-clear- column should remove all disks of that column`() {
         // GIVEN
         //              a three Disks Column
         val column = Column()

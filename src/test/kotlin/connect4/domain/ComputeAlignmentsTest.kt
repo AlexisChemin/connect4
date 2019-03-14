@@ -10,7 +10,7 @@ class ComputeAlignmentsTest {
 
 
     @Test
-    fun should_compute_alignemt_on_empty_grid() {
+    fun `should compute alignments on an empty grid`() {
         // GIVEN
         val grid = Grid()
 
@@ -25,13 +25,13 @@ class ComputeAlignmentsTest {
 
 
     @Test
-    fun should_compute_horizontal_alignments() {
+    fun `should detect horizontal alignments`() {
 
         // GIVEN
         val grid = gridOf {
-            r(" ", " ", " ", " ", " ", " ", " ")
-            r(" ", " ", " ", " ", " ", " ", " ")
-            r("R", "R", " ", "Y", "Y", "Y", "Y")
+            r("   |   |   |   |   |   |   |   |   ")
+            r("   |   |   |   |   |   |   |   |   ")
+            r("   | R | R |   | Y | Y | Y | Y |   ")
         }
 
 
@@ -49,12 +49,12 @@ class ComputeAlignmentsTest {
 
 
     @Test
-    fun should_compute_vertical_alignments() {
+    fun `should detect vertical alignments`() {
         // GIVEN
         val grid = gridOf {
-            r("R", " ", " ", " ", " ", "Y", " ")
-            r("R", " ", " ", "Y", " ", "Y", " ")
-            r("R", " ", " ", "Y", " ", "Y", " ")
+            r("   | R |   |   |   |   | Y |   |   ")
+            r("   | R |   |   | Y |   | Y |   |   ")
+            r("   | R |   |   | Y |   | Y |   |   ")
         }
 
 
@@ -74,12 +74,12 @@ class ComputeAlignmentsTest {
 
 
     @Test
-    fun should_compute_diagonal_alignemts() {
+    fun `should detect diagonal alignments`() {
         // GIVEN
         val grid = gridOf {
-            r(" ", " ", "R", " ", "R", " ", " ")
-            r(" ", " ", "Y", "R", "Y", " ", " ")
-            r(" ", " ", "R", "Y", "R", " ", " ")
+            r("   |   |   | R |   | R |   |   |   ")
+            r("   |   |   | Y | R | Y |   |   |   ")
+            r("   |   |   | R | Y | R |   |   |   ")
         }
 
         // WHEN

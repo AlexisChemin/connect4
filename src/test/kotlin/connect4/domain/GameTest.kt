@@ -2,8 +2,12 @@ package connect4.domain
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.spy
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Ignore
 import org.junit.Test
 
@@ -13,9 +17,9 @@ class GameTest {
 
 
     @Test
-    fun a_game_RED_vs_YELLOW_plays_RED_first() {
+    fun `player1 should play RED in a REDvsYELLOW game`() {
         // GIVEN
-        val game = Game(Disk.RED)
+        val game = Game(player1Disk = Disk.RED)
 
         // WHEN
         game
@@ -30,9 +34,9 @@ class GameTest {
 
 
     @Test
-    fun a_game_YELLOW_RED_plays_YELLOW_first() {
+    fun `player1 should play YELLOW in a YELLOWvsRED game`() {
         // GIVEN
-        val game = Game(Disk.YELLOW)
+        val game = Game(player1Disk = Disk.YELLOW)
 
         // WHEN
         game
@@ -48,7 +52,7 @@ class GameTest {
 
 
     @Test
-    fun a_game_terminated_when_a_player_has_4_align_disk() {
+    fun `should terminate when a player has 4 aligned disks`() {
         // GIVEN
         val game = Game(Disk.YELLOW)
 
@@ -66,5 +70,51 @@ class GameTest {
         assertThat(game.status.isTerminated()).isTrue()
         assertThat((game.status as Game.GameTerminated).winner).isEqualTo(Disk.YELLOW)
     }
+
+
+
+    @Test
+    fun `should let player RED plays and win`() {
+        // GIVEN
+        val initialGrid = gridOf {
+            r("   |   |   |   | R | R |   |   |   ")
+            r("   |   |   | R | Y | R |   |   |   ")
+            r("   | R | R | Y | R | Y | Y |   |   ")
+        }
+        val game = Game(Disk.RED , initialGrid)
+        assertThat(game.status.isTerminated()).isFalse()
+
+        // WHEN
+        game
+                .player1(ColumnIndex.COLUMN_4)
+
+        // THEN
+        assertThat(game.status.isTerminated()).isTrue()
+        assertThat((game.status as Game.GameTerminated).winner).isEqualTo(Disk.RED)
+    }
+
+
+
+
+
+    @Test(expected = GameTerminatedException::class)
+    fun `should not be able to play a terminated game`() {
+        // GIVEN
+        val initialGrid = gridOf {
+            r("   |   |   |   |   |   |   |   |   ")
+            r("   |   |   | Y |   |   | Y |   |   ")
+            r("   | R | R | R | R | Y | Y |   |   ")
+        }
+        val game = Game(Disk.RED , initialGrid)
+        assertThat(game.status.isTerminated()).isTrue()
+
+        // WHEN
+        game
+                .player1(ColumnIndex.COLUMN_4)
+
+        // THEN
+        // exception thrown
+    }
+
 
 }
