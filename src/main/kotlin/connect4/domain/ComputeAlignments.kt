@@ -8,6 +8,8 @@ import java.util.*
  */
 
 
+typealias GridPosition = Pair<ColumnIndex, RowIndex>
+
 enum class AlignmentDirection {
     Horizontal,
     Vertical,
@@ -15,12 +17,10 @@ enum class AlignmentDirection {
     DownLeftUpRight
 }
 
-
-//typealias GridPosition = Pair<Int, Int>
-
-typealias GridPosition = Pair<ColumnIndex, RowIndex>
-
-open class Alignment(val start: GridPosition, val direction: AlignmentDirection, var size: Int) {
+/**
+ * Alignment is what we want to compute. It has a 'start'ing position (a disk), a direction and a size (length)
+ */
+data class Alignment(val start: GridPosition, val direction: AlignmentDirection, var size: Int) {
 
     fun increase(): Alignment {
         size += 1
@@ -28,17 +28,13 @@ open class Alignment(val start: GridPosition, val direction: AlignmentDirection,
     }
 }
 
-
-class Alignments() {
+/**
+ * Map of Alignments indexed by Direction
+ */
+class Alignments {
 
     val alignmentByDirection: MutableMap<AlignmentDirection, Alignment> = HashMap()
 
-//    constructor(start: GridPosition, size : Int) :  this() {
-//        set( Alignment(start, AlignmentDirection.Horizontal, size) )
-//        set( Alignment(start, AlignmentDirection.Vertical, size) )
-//        set( Alignment(start, AlignmentDirection.UpLeftDownRight, size) )
-//        set( Alignment(start, AlignmentDirection.DownLeftUpRight, size) )
-//    }
 
     fun get(direction: AlignmentDirection): Alignment? {
         return alignmentByDirection[direction]
@@ -51,56 +47,31 @@ class Alignments() {
 }
 
 
-//fun emptyAlignments(start : GridPosition) : Alignments {
-//    return Alignments(start, 0)
-//}
+/**
+ * All alignments for a given disk
+ */
+typealias AlignmentsByDisk = Map<Disk, Alignments>
 
-typealias AlignementsByDisk = Map<Disk, Alignments>
 
-class GridAlignments(grid: Grid) {
 
-    private var alignmentsGrid: Map<ColumnIndex, Map<RowIndex, AlignementsByDisk>> = initAlignmentMap()
+class ComputeAlignments(grid: Grid) {
 
+    // what we're about to compute : 2-dimensions array of mapping (Disk -> Alignments)
+    private var alignmentsGrid: Map<ColumnIndex, Map<RowIndex, AlignmentsByDisk>> = initAlignmentMap()
+
+    // result goes here
     val result: Set<Alignment>
 
     init {
-//        alignmentsGrid = initAlignmentMap()
         result = compute(grid)
     }
 
-    // what we're about to compute : 2-dimensions array of mapping (Disk -> Alignment)
 
 
-    private fun initAlignmentMap(): Map<ColumnIndex, Map<RowIndex, AlignementsByDisk>> {
-        val result = HashMap<ColumnIndex, Map<RowIndex, Map<Disk, Alignments>>>()
-        for (columnIndex in ColumnIndex.values()) {
-            val hashMap = HashMap<RowIndex, AlignementsByDisk>()
-            result[columnIndex] = hashMap
-            for (rowIndex in RowIndex.values()) {
-                val position = GridPosition(columnIndex, rowIndex)
-                val hashMapRow: AlignementsByDisk = mapOf(Disk.RED to Alignments(), Disk.YELLOW to Alignments())
-                hashMap[rowIndex] = hashMapRow
-            }
-        }
-        return result
-
-    }
-//    Array(GridWidth){ columnIndex ->
-
-
-//    private val alignmentsGrid : Array<Array<Map<Disk,Alignments>>> = Array(GridWidth){ columnIndex ->
-//            Array(ColumnHeight) {
-//                rowIndex ->
-//                val start = GridPosition(columnIndex, rowIndex)
-////                HashMap() }
-//                mapOf(Disk.YELLOW to emptyAlignments(start), Disk.RED to emptyAlignments(start)) }
-//        }
-////
-//    private val alignmentsGrid : Array<Array<Map<Disk,Alignments>>> = Array(GridWidth){
-//        Array(ColumnHeight) {}
-
-
-
+    /**
+     * computation function : fills up the alignmentsGrid with alignments
+     * and stores alignement with size greater than 1
+     */
     fun compute(grid: Grid): Set<Alignment> {
 
         var all = HashSet<Alignment>()
@@ -170,20 +141,31 @@ class GridAlignments(grid: Grid) {
         return alignments.get(direction) ?: emptyAlignment(columnIndex, rowIndex, direction)
     }
 
+
+    /**
+     * Shortcut to get the set of alignment corresponding to the given position (columnIndex, rowIndex)
+     * and given disk
+     */
     private fun getAlignments(disk: Disk, columnIndex: ColumnIndex, rowIndex: RowIndex) =
             alignmentsGrid[columnIndex]!![rowIndex]!![disk]!!
-//
-//
-//        fun getAlignment(disk : Disk, columnIndex : Int, rowIndex : Int, direction : AlignmentDirection) : Alignment {
-//        if (columnIndex < 0 || columnIndex >= GridWidth) {
-//            return emptyAlignment(columnIndex, rowIndex, direction)
-//        }
-//        if (rowIndex < 0 || rowIndex >= ColumnHeight) {
-//            return emptyAlignment(columnIndex, rowIndex, direction)
-//        }
-//        val result = alignmentsGrid[columnIndex][rowIndex][disk]
-//        return result?.let { it.get(direction) } ?: emptyAlignment(columnIndex, rowIndex, direction)
-//    }
+
+    /**
+     * Initialisation of 'alignmentsGrid' that will be computed later
+     */
+    private fun initAlignmentMap(): Map<ColumnIndex, Map<RowIndex, AlignmentsByDisk>> {
+        val result = HashMap<ColumnIndex, Map<RowIndex, Map<Disk, Alignments>>>()
+        for (columnIndex in ColumnIndex.values()) {
+            val hashMap = HashMap<RowIndex, AlignmentsByDisk>()
+            result[columnIndex] = hashMap
+            for (rowIndex in RowIndex.values()) {
+                val hashMapRow: AlignmentsByDisk = mapOf(Disk.RED to Alignments(), Disk.YELLOW to Alignments())
+                hashMap[rowIndex] = hashMapRow
+            }
+        }
+        return result
+
+    }
+
 
 
     private fun emptyAlignment(columnIndex: ColumnIndex, rowIndex: RowIndex, direction: AlignmentDirection) =
