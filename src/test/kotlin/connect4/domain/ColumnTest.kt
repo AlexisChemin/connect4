@@ -4,6 +4,8 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
+import connect4.domain.Disk.*
+import connect4.domain.RowIndex.*
 import org.junit.Test
 
 class ColumnTest {
@@ -31,9 +33,9 @@ class ColumnTest {
         val column = Column()
 
         // WHEN
-        column.insertDisk(Disk.YELLOW)
-        column.insertDisk(Disk.RED)
-        column.insertDisk(Disk.RED)
+        column.insertDisk(YELLOW)
+        column.insertDisk(RED)
+        column.insertDisk(RED)
 
         // THEN
         assertThat(column.height()).isEqualTo(3)
@@ -49,13 +51,13 @@ class ColumnTest {
         //              a filled up column
         val column = Column()
         for (x in 1..ColumnHeight) {
-            column.insertDisk(Disk.YELLOW)
+            column.insertDisk(YELLOW)
         }
         assertThat(column.height()).isEqualTo(ColumnHeight)
 
         // WHEN
         //              add one more disk
-        column.insertDisk(Disk.YELLOW)
+        column.insertDisk(YELLOW)
 
         // THEN
         //              exception thrown
@@ -68,21 +70,21 @@ class ColumnTest {
         // GIVEN
         //              a three Disks Column
         val column = Column()
-        column.insertDisk(Disk.YELLOW)
-        column.insertDisk(Disk.RED)
-        column.insertDisk(Disk.YELLOW)
+        column.insertDisk(YELLOW)
+        column.insertDisk(RED)
+        column.insertDisk(YELLOW)
 
 
         // WHEN
         //              get disks
-        val disk0 = column.getDiskAt(RowIndex.ROW_0)
-        val disk1 = column.getDiskAt(RowIndex.ROW_1)
-        val disk2 = column.getDiskAt(RowIndex.ROW_2)
+        val disk0 = column.getDiskAt(ROW_0)
+        val disk1 = column.getDiskAt(ROW_1)
+        val disk2 = column.getDiskAt(ROW_2)
 
         // THEN
-        assertThat(disk0).isEqualTo(Disk.YELLOW)
-        assertThat(disk1).isEqualTo(Disk.RED)
-        assertThat(disk2).isEqualTo(Disk.YELLOW)
+        assertThat(disk0).isEqualTo(YELLOW)
+        assertThat(disk1).isEqualTo(RED)
+        assertThat(disk2).isEqualTo(YELLOW)
     }
 
 
@@ -92,15 +94,15 @@ class ColumnTest {
         // GIVEN
         //              a three Disks Column
         val column = Column()
-        column.insertDisk(Disk.YELLOW)
-        column.insertDisk(Disk.RED)
-        column.insertDisk(Disk.YELLOW)
+        column.insertDisk(YELLOW)
+        column.insertDisk(RED)
+        column.insertDisk(YELLOW)
 
 
         // WHEN
         //              get disks from position 3
-        val disk3 = column.getDiskAt(RowIndex.ROW_3)
-        val disk4 = column.getDiskAt(RowIndex.ROW_4)
+        val disk3 = column.getDiskAt(ROW_3)
+        val disk4 = column.getDiskAt(ROW_4)
 
         // THEN
         assertThat(disk3).isNull()
@@ -116,9 +118,9 @@ class ColumnTest {
         // GIVEN
         //              a three Disks Column
         val column = Column()
-        column.insertDisk(Disk.YELLOW)
-        column.insertDisk(Disk.RED)
-        column.insertDisk(Disk.YELLOW)
+        column.insertDisk(YELLOW)
+        column.insertDisk(RED)
+        column.insertDisk(YELLOW)
 
         // WHEN
         column.clear()

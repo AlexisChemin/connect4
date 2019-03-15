@@ -2,6 +2,9 @@ package connect4.domain
 
 import assertk.assertThat
 import assertk.assertions.*
+import connect4.domain.AlignmentDirection.*
+import connect4.domain.ColumnIndex.*
+import connect4.domain.RowIndex.*
 import org.junit.Test
 
 class ComputeAlignmentsTest {
@@ -40,8 +43,8 @@ class ComputeAlignmentsTest {
 
         // THEN
         assertThat(alignments).containsAll(
-                Alignment(GridPosition(ColumnIndex.COLUMN_0, RowIndex.ROW_0), AlignmentDirection.Horizontal, 2),
-                Alignment(GridPosition(ColumnIndex.COLUMN_3, RowIndex.ROW_0), AlignmentDirection.Horizontal, 4)
+                Alignment(GridPosition(COLUMN_0, ROW_0), Horizontal, 2),
+                Alignment(GridPosition(COLUMN_3, ROW_0), Horizontal, 4)
         )
     }
 
@@ -63,9 +66,9 @@ class ComputeAlignmentsTest {
 
         // THEN
         assertThat(alignments).containsAll(
-                Alignment(GridPosition(ColumnIndex.COLUMN_0, RowIndex.ROW_0), AlignmentDirection.Vertical, 3),
-                Alignment(GridPosition(ColumnIndex.COLUMN_3, RowIndex.ROW_0), AlignmentDirection.Vertical, 2),
-                Alignment(GridPosition(ColumnIndex.COLUMN_5, RowIndex.ROW_0), AlignmentDirection.Vertical, 3)
+                Alignment(GridPosition(COLUMN_0, ROW_0), Vertical, 3),
+                Alignment(GridPosition(COLUMN_3, ROW_0), Vertical, 2),
+                Alignment(GridPosition(COLUMN_5, ROW_0), Vertical, 3)
         )
     }
 
@@ -87,10 +90,10 @@ class ComputeAlignmentsTest {
 
         // THEN
         assertThat(alignments).containsAll(
-                Alignment(GridPosition(ColumnIndex.COLUMN_2, RowIndex.ROW_0), AlignmentDirection.DownLeftUpRight, 3),
-                Alignment(GridPosition(ColumnIndex.COLUMN_2, RowIndex.ROW_2), AlignmentDirection.UpLeftDownRight, 3),
-                Alignment(GridPosition(ColumnIndex.COLUMN_2, RowIndex.ROW_1), AlignmentDirection.UpLeftDownRight, 2),
-                Alignment(GridPosition(ColumnIndex.COLUMN_3, RowIndex.ROW_0), AlignmentDirection.DownLeftUpRight, 2)
+                Alignment(GridPosition(COLUMN_2, ROW_0), DownLeftUpRight, 3),
+                Alignment(GridPosition(COLUMN_2, ROW_2), UpLeftDownRight, 3),
+                Alignment(GridPosition(COLUMN_2, ROW_1), UpLeftDownRight, 2),
+                Alignment(GridPosition(COLUMN_3, ROW_0), DownLeftUpRight, 2)
         )
     }
 

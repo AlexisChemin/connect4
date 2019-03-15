@@ -5,6 +5,9 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
+import connect4.domain.ColumnIndex.*
+import connect4.domain.Disk.*
+import connect4.domain.RowIndex.*
 import org.junit.Test
 
 class GridTest {
@@ -31,7 +34,7 @@ class GridTest {
         val grid = Grid()
 
         // WHEN
-        grid.insertDisk(ColumnIndex.COLUMN_3, Disk.YELLOW)
+        grid.insertDisk(COLUMN_3, YELLOW)
 
         // THEN
         assertThat(grid.isEmpty()).isFalse()
@@ -45,9 +48,9 @@ class GridTest {
         val grid = Grid()
 
         // WHEN
-        grid.insertDisk(ColumnIndex.COLUMN_3, Disk.YELLOW)
-        grid.insertDisk(ColumnIndex.COLUMN_3, Disk.RED)
-        grid.insertDisk(ColumnIndex.COLUMN_0, Disk.RED)
+        grid.insertDisk(COLUMN_3, YELLOW)
+        grid.insertDisk(COLUMN_3, RED)
+        grid.insertDisk(COLUMN_0, RED)
 
         // THEN
         assertThat(grid.isEmpty()).isFalse()
@@ -61,22 +64,22 @@ class GridTest {
         // GIVEN
         //              a three Disks Grid
         val grid = Grid()
-        grid.insertDisk(ColumnIndex.COLUMN_1, Disk.YELLOW)
-        grid.insertDisk(ColumnIndex.COLUMN_1, Disk.RED)
-        grid.insertDisk(ColumnIndex.COLUMN_0, Disk.RED)
+        grid.insertDisk(COLUMN_1, YELLOW)
+        grid.insertDisk(COLUMN_1, RED)
+        grid.insertDisk(COLUMN_0, RED)
 
 
         // WHEN
         //              get disks
-        val disk0 = grid.getDiskAt(ColumnIndex.COLUMN_1, RowIndex.ROW_0)
-        val disk1 = grid.getDiskAt(ColumnIndex.COLUMN_1, RowIndex.ROW_1)
-        val disk2 = grid.getDiskAt(ColumnIndex.COLUMN_0, RowIndex.ROW_0)
+        val disk0 = grid.getDiskAt(COLUMN_1, ROW_0)
+        val disk1 = grid.getDiskAt(COLUMN_1, ROW_1)
+        val disk2 = grid.getDiskAt(COLUMN_0, ROW_0)
 
 
         // THEN
-        assertThat(disk0).isEqualTo(Disk.YELLOW)
-        assertThat(disk1).isEqualTo(Disk.RED)
-        assertThat(disk2).isEqualTo(Disk.RED)
+        assertThat(disk0).isEqualTo(YELLOW)
+        assertThat(disk1).isEqualTo(RED)
+        assertThat(disk2).isEqualTo(RED)
     }
 
 
@@ -86,13 +89,13 @@ class GridTest {
         // GIVEN
         //              a three Disks Column
         val grid = Grid()
-        grid.insertDisk(ColumnIndex.COLUMN_3, Disk.YELLOW)
+        grid.insertDisk(COLUMN_3, YELLOW)
 
 
         // WHEN
         //              get disks from position 3
-        val disk3 = grid.getDiskAt(ColumnIndex.COLUMN_3, RowIndex.ROW_1) // row over height
-        val disk4 = grid.getDiskAt(ColumnIndex.COLUMN_0, RowIndex.ROW_0)
+        val disk3 = grid.getDiskAt(COLUMN_3, ROW_1) // row over height
+        val disk4 = grid.getDiskAt(COLUMN_0, ROW_0)
 
         // THEN
         assertThat(disk3).isNull()

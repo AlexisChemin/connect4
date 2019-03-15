@@ -67,14 +67,9 @@ class GridBuilder {
     val rows = arrayListOf<Array<Disk?>>()
 
     /**
-     * each string match a column. set "R" for a 'RED' disk, "Y" for a 'YELLOW' dist
+     * Defines a grid row from a piped string . set "R" for a 'RED' disk, "Y" for a 'YELLOW' dist
+     * string can be like : "   | R | R | Y | R | Y | Y |   |   "
      */
-    fun r(s0: String, s1: String, s2: String, s3: String, s4: String, s5: String, s6: String) : GridBuilder {
-        val row = arrayOf(stringToDisk(s0), stringToDisk(s1), stringToDisk(s2), stringToDisk(s3), stringToDisk(s4), stringToDisk(s5), stringToDisk(s6))
-        rows.add(row)
-        return this
-    }
-
     fun r(rowString : String) : GridBuilder {
         val diskList = rowString.trim().split("|")
         if (diskList.size != 9) {
@@ -84,6 +79,8 @@ class GridBuilder {
         rows.add(row)
         return this
     }
+
+
 
     fun build() : Grid {
         val grid = Grid()

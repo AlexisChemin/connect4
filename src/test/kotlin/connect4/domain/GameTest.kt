@@ -3,12 +3,9 @@ package connect4.domain
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
-import assertk.assertions.isNull
 import assertk.assertions.isTrue
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.spy
-import com.nhaarman.mockito_kotlin.whenever
-import org.junit.Ignore
+import connect4.domain.ColumnIndex.*
+import connect4.domain.RowIndex.*
 import org.junit.Test
 
 class GameTest {
@@ -23,12 +20,12 @@ class GameTest {
 
         // WHEN
         game
-                .player1(ColumnIndex.COLUMN_0)
-                .player2(ColumnIndex.COLUMN_5)
+                .player1(COLUMN_0)
+                .player2(COLUMN_5)
 
         // THEN
-        assertThat(game.grid.getDiskAt(ColumnIndex.COLUMN_0, RowIndex.ROW_0)).isEqualTo(Disk.RED)
-        assertThat(game.grid.getDiskAt(ColumnIndex.COLUMN_5, RowIndex.ROW_0)).isEqualTo(Disk.YELLOW)
+        assertThat(game.grid.getDiskAt(COLUMN_0, ROW_0)).isEqualTo(Disk.RED)
+        assertThat(game.grid.getDiskAt(COLUMN_5, ROW_0)).isEqualTo(Disk.YELLOW)
     }
 
 
@@ -40,12 +37,12 @@ class GameTest {
 
         // WHEN
         game
-                .player1(ColumnIndex.COLUMN_0)
-                .player2(ColumnIndex.COLUMN_5)
+                .player1(COLUMN_0)
+                .player2(COLUMN_5)
 
         // THEN
-        assertThat(game.grid.getDiskAt(ColumnIndex.COLUMN_0, RowIndex.ROW_0)).isEqualTo(Disk.YELLOW)
-        assertThat(game.grid.getDiskAt(ColumnIndex.COLUMN_5, RowIndex.ROW_0)).isEqualTo(Disk.RED)
+        assertThat(game.grid.getDiskAt(COLUMN_0, ROW_0)).isEqualTo(Disk.YELLOW)
+        assertThat(game.grid.getDiskAt(COLUMN_5, ROW_0)).isEqualTo(Disk.RED)
     }
 
 
@@ -58,13 +55,13 @@ class GameTest {
 
         // WHEN
         game
-                .player1(ColumnIndex.COLUMN_0)
-                .player2(ColumnIndex.COLUMN_1)
-                .player1(ColumnIndex.COLUMN_0)
-                .player2(ColumnIndex.COLUMN_2)
-                .player1(ColumnIndex.COLUMN_0)
-                .player2(ColumnIndex.COLUMN_3)
-                .player1(ColumnIndex.COLUMN_0)
+                .player1(COLUMN_0)
+                .player2(COLUMN_1)
+                .player1(COLUMN_0)
+                .player2(COLUMN_2)
+                .player1(COLUMN_0)
+                .player2(COLUMN_3)
+                .player1(COLUMN_0)
 
         // THEN
         assertThat(game.status.isTerminated()).isTrue()
@@ -74,7 +71,7 @@ class GameTest {
 
 
     @Test
-    fun `should let player RED plays and win`() {
+    fun `should let player RED play and win`() {
         // GIVEN
         val initialGrid = gridOf {
             r("   |   |   |   | R | R |   |   |   ")
@@ -86,7 +83,7 @@ class GameTest {
 
         // WHEN
         game
-                .player1(ColumnIndex.COLUMN_4)
+                .player1(COLUMN_4)
 
         // THEN
         assertThat(game.status.isTerminated()).isTrue()
@@ -110,7 +107,7 @@ class GameTest {
 
         // WHEN
         game
-                .player1(ColumnIndex.COLUMN_4)
+                .player1(COLUMN_4)
 
         // THEN
         // exception thrown

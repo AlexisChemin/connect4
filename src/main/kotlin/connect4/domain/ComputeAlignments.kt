@@ -1,5 +1,6 @@
 package connect4.domain
 
+import connect4.domain.AlignmentDirection.*
 import java.util.*
 
 
@@ -77,33 +78,35 @@ class ComputeAlignments(grid: Grid) {
         var all = HashSet<Alignment>()
 
 
-        for (myColumnIndex in ColumnIndex.values()) {
-            for (myRowIndex in RowIndex.values()) {
+        for (column in ColumnIndex.values()) {
+            for (row in RowIndex.values()) {
 
-                val myColor = grid.getDiskAt(myColumnIndex, myRowIndex) ?: continue
+                // skip 'no-disk' at  (column,row) position
+                val color = grid.getDiskAt(column, row) ?: continue
 
-                // compute result, from left column and other up/down rows
-                val upLeftDownRightAlignment = getAlignment(myColor, myColumnIndex, myRowIndex, AlignmentDirection.UpLeftDownRight).increase()
-                val horizontalAlignment = getAlignment(myColor, myColumnIndex, myRowIndex, AlignmentDirection.Horizontal).increase()
-                val downRightAlignmentAlignment = getAlignment(myColor, myColumnIndex, myRowIndex, AlignmentDirection.DownLeftUpRight).increase()
-                val verticalAlignment = getAlignment(myColor, myColumnIndex, myRowIndex, AlignmentDirection.Vertical).increase()
+                // compute alignments at this (column,row) position
+                // ==> increase existing alignment or increase a new empty alignment
+                val upLeftDownRightAlignment    = getAlignment(color, column, row, UpLeftDownRight).increase()
+                val horizontalAlignment         = getAlignment(color, column, row, Horizontal).increase()
+                val downRightAlignmentAlignment = getAlignment(color, column, row, DownLeftUpRight).increase()
+                val verticalAlignment           = getAlignment(color, column, row, Vertical).increase()
 
 
-                // set my result
-                val alignments = getAlignments(myColor, myColumnIndex, myRowIndex)
+                // set new alignments for this (column,row)
+                val alignments = getAlignments(color, column, row)
                 alignments.set(upLeftDownRightAlignment)
                 alignments.set(horizontalAlignment)
                 alignments.set(downRightAlignmentAlignment)
                 alignments.set(verticalAlignment)
 
-                all.add(upLeftDownRightAlignment)
-                all.add(horizontalAlignment)
-                all.add(downRightAlignmentAlignment)
-                all.add(verticalAlignment)
+                // store any alignment whose size is greater than 1
+                all.addIfSizedEnough(upLeftDownRightAlignment)
+                all.addIfSizedEnough(horizontalAlignment)
+                all.addIfSizedEnough(downRightAlignmentAlignment)
+                all.addIfSizedEnough(verticalAlignment)
             }
         }
-
-        return all.filter { it.size > 1 }.toSet()
+        return all
     }
 
 
@@ -116,19 +119,19 @@ class ComputeAlignments(grid: Grid) {
         var otherColumnIndex: ColumnIndex? = columnIndex
         var otherRowIndex: RowIndex? = rowIndex
         when (direction) {
-            AlignmentDirection.UpLeftDownRight -> {
+            UpLeftDownRight -> {
                 otherColumnIndex = columnIndex.leftward()
                 otherRowIndex = rowIndex.uppward()
             }
-            AlignmentDirection.Horizontal -> {
+            Horizontal -> {
                 otherColumnIndex = columnIndex.leftward()
                 otherRowIndex = rowIndex
             }
-            AlignmentDirection.DownLeftUpRight -> {
+            DownLeftUpRight -> {
                 otherColumnIndex = columnIndex.leftward()
                 otherRowIndex = rowIndex.downward()
             }
-            AlignmentDirection.Vertical -> {
+            Vertical -> {
                 otherColumnIndex = columnIndex
                 otherRowIndex = rowIndex.downward()
             }
@@ -171,4 +174,10 @@ class ComputeAlignments(grid: Grid) {
     private fun emptyAlignment(columnIndex: ColumnIndex, rowIndex: RowIndex, direction: AlignmentDirection) =
             Alignment(GridPosition(columnIndex, rowIndex), direction, 0)
 
+}
+
+private fun <E : Alignment> HashSet<E>.addIfSizedEnough(alignment: E) {
+    if (alignment.size > 1) {
+        this.add(alignment)
+    }
 }
