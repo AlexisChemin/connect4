@@ -1,7 +1,5 @@
 package connect4.domain
 
-import sun.audio.AudioPlayer.player
-
 
 /**
  *
@@ -47,6 +45,7 @@ class Game
 
 
     var status : GameStatus = gameStatus()
+        private set
 
 
     /**
@@ -73,11 +72,12 @@ class Game
      * makes the move
      * recompute game status
      */
-    private fun play(color: Disk, playsAt: ColumnIndex) {
+    private fun play(disk: Disk, position: ColumnIndex) {
         if (status.isTerminated()) {
             throw GameTerminatedException("Game is terminated !")
         }
-        grid.insertDisk(playsAt, color)
+
+        grid.insertDisk(position, disk)
 
         // any winner ?
         status = gameStatus()
@@ -98,14 +98,16 @@ class Game
     }
 
 
-    private fun findWinner(grid: Grid): Disk? {
+    private fun findWinner(grid: Grid): Winner? {
         // fetch alignments, find one with a length of at least 4
         val alignment = ComputeAlignments(grid).result.find {  it.size >= 4 }
 
         alignment?.let {
             // alignment starts with the winner color
             // ==> just get the disk at the 'start' position
-            return grid.getDiskAt( it.start.first, it.start.second )
+            val disk = grid.getDiskAt(it.start.first, it.start.second)
+
+            return disk?.let { Winner(disk, alignment) }
         }
         return null
     }
@@ -116,9 +118,12 @@ class Game
         override fun isTerminated(): Boolean = false
     }
 
-    class GameTerminated(val winner : Disk?) : GameStatus {
+    class GameTerminated(val winner : Winner?) : GameStatus {
         override fun isTerminated(): Boolean = true
     }
+
+
+    class Winner(val disk : Disk, val alignment: Alignment)
 
 
 }

@@ -84,16 +84,18 @@ class ComputeAlignments(grid: Grid) {
                 // skip 'no-disk' at  (column,row) position
                 val color = grid.getDiskAt(column, row) ?: continue
 
+                val position = GridPosition(column, row)
+
                 // compute alignments at this (column,row) position
                 // ==> increase existing alignment or increase a new empty alignment
-                val upLeftDownRightAlignment    = getAlignment(color, column, row, UpLeftDownRight).increase()
-                val horizontalAlignment         = getAlignment(color, column, row, Horizontal).increase()
-                val downRightAlignmentAlignment = getAlignment(color, column, row, DownLeftUpRight).increase()
-                val verticalAlignment           = getAlignment(color, column, row, Vertical).increase()
+                val upLeftDownRightAlignment    = getAlignment(color, position, UpLeftDownRight).increase()
+                val horizontalAlignment         = getAlignment(color, position, Horizontal).increase()
+                val downRightAlignmentAlignment = getAlignment(color, position, DownLeftUpRight).increase()
+                val verticalAlignment           = getAlignment(color, position, Vertical).increase()
 
 
                 // set new alignments for this (column,row)
-                val alignments = getAlignments(color, column, row)
+                val alignments = getAlignments(color, position)
                 alignments.set(upLeftDownRightAlignment)
                 alignments.set(horizontalAlignment)
                 alignments.set(downRightAlignmentAlignment)
@@ -115,33 +117,51 @@ class ComputeAlignments(grid: Grid) {
      * - the existing alignment relative to this position (columnIndex, rowIndex) corresponding to the direction
      * - a newly alignment for this position+direction
      */
-    fun getAlignment(disk: Disk, columnIndex: ColumnIndex, rowIndex: RowIndex, direction: AlignmentDirection): Alignment {
-        var otherColumnIndex: ColumnIndex? = columnIndex
-        var otherRowIndex: RowIndex? = rowIndex
+    fun getAlignment(disk: Disk, position : GridPosition, direction: AlignmentDirection): Alignment {
+
+        // find sibbling
+        val sibbling = getSibblingPosition(position, direction) ?:
+                // none => return empty alignment
+                return emptyAlignment(position, direction)
+
+        // get all sibbling alignments
+        val alignments = getAlignments(disk, sibbling)
+
+        // return the one of given direction (or new one)
+        return alignments.get(direction) ?: emptyAlignment(position, direction)
+    }
+
+
+    /**
+     * get the sibbling position of the given position going in given 'direction'
+     */
+    private fun getSibblingPosition(position: GridPosition, direction: AlignmentDirection): GridPosition? {
+        var otherColumnIndex: ColumnIndex? = position.first
+        var otherRowIndex: RowIndex? = position.second
         when (direction) {
             UpLeftDownRight -> {
-                otherColumnIndex = columnIndex.leftward()
-                otherRowIndex = rowIndex.uppward()
+                otherColumnIndex = position.first.leftward()
+                otherRowIndex = position.second.uppward()
             }
             Horizontal -> {
-                otherColumnIndex = columnIndex.leftward()
-                otherRowIndex = rowIndex
+                otherColumnIndex = position.first.leftward()
+                otherRowIndex = position.second
             }
             DownLeftUpRight -> {
-                otherColumnIndex = columnIndex.leftward()
-                otherRowIndex = rowIndex.downward()
+                otherColumnIndex = position.first.leftward()
+                otherRowIndex = position.second.downward()
             }
             Vertical -> {
-                otherColumnIndex = columnIndex
-                otherRowIndex = rowIndex.downward()
+                otherColumnIndex = position.first
+                otherRowIndex = position.second.downward()
             }
         }
+
         if (otherColumnIndex == null || otherRowIndex == null) {
-            return emptyAlignment(columnIndex, rowIndex, direction)
+            return null
         }
 
-        val alignments = getAlignments(disk, otherColumnIndex, otherRowIndex)
-        return alignments.get(direction) ?: emptyAlignment(columnIndex, rowIndex, direction)
+        return GridPosition(otherColumnIndex, otherRowIndex)
     }
 
 
@@ -149,8 +169,8 @@ class ComputeAlignments(grid: Grid) {
      * Shortcut to get the set of alignment corresponding to the given position (columnIndex, rowIndex)
      * and given disk
      */
-    private fun getAlignments(disk: Disk, columnIndex: ColumnIndex, rowIndex: RowIndex) =
-            alignmentsGrid[columnIndex]!![rowIndex]!![disk]!!
+    private fun getAlignments(disk: Disk, position: GridPosition) =
+            alignmentsGrid[position.first]!![position.second]!![disk]!!
 
     /**
      * Initialisation of 'alignmentsGrid' that will be computed later
@@ -171,8 +191,8 @@ class ComputeAlignments(grid: Grid) {
 
 
 
-    private fun emptyAlignment(columnIndex: ColumnIndex, rowIndex: RowIndex, direction: AlignmentDirection) =
-            Alignment(GridPosition(columnIndex, rowIndex), direction, 0)
+    private fun emptyAlignment(position: GridPosition, direction: AlignmentDirection) =
+            Alignment(position, direction, 0)
 
 }
 
