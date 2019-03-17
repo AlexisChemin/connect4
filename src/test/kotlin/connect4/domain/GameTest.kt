@@ -5,6 +5,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
+import com.nhaarman.mockito_kotlin.*
 import connect4.domain.AlignmentDirection.*
 import connect4.domain.ColumnIndex.*
 import connect4.domain.Disk.*
@@ -16,15 +17,23 @@ class GameTest {
 
 
 
+
     @Test
     fun `player1 should play RED in a REDvsYELLOW game`() {
         // GIVEN
-        val game = Game(player1Disk = RED)
+        val redPlayer = mock<Player> {
+            makingMove(RED, COLUMN_0)
+        }
+        val yellowPlayer = mock<Player> {
+            makingMove(YELLOW, COLUMN_5)
+        }
+
+        val game = Game(redPlayer, yellowPlayer)
 
         // WHEN
         game
-                .player1(COLUMN_0)
-                .player2(COLUMN_5)
+                .startGameWithRedPlayer()
+                .play()
 
         // THEN
         assertThat(game.grid.getDiskAt(COLUMN_0, ROW_0)).isEqualTo(RED)
@@ -36,16 +45,23 @@ class GameTest {
     @Test
     fun `player1 should play YELLOW in a YELLOWvsRED game`() {
         // GIVEN
-        val game = Game(player1Disk = YELLOW)
+        val redPlayer = mock<Player> {
+            makingMove(RED, COLUMN_0)
+        }
+        val yellowPlayer = mock<Player> {
+            makingMove(YELLOW, COLUMN_5)
+        }
+
+        val game = Game(redPlayer, yellowPlayer)
 
         // WHEN
         game
-                .player1(COLUMN_0)
-                .player2(COLUMN_5)
+                .startGameWithYellowPlayer()
+                .play()
 
         // THEN
-        assertThat(game.grid.getDiskAt(COLUMN_0, ROW_0)).isEqualTo(YELLOW)
-        assertThat(game.grid.getDiskAt(COLUMN_5, ROW_0)).isEqualTo(RED)
+        assertThat(game.grid.getDiskAt(COLUMN_5, ROW_0)).isEqualTo(YELLOW)
+        assertThat(game.grid.getDiskAt(COLUMN_0, ROW_0)).isEqualTo(RED)
     }
 
 
@@ -54,22 +70,34 @@ class GameTest {
     @Test
     fun `should terminate when a player has 4 aligned disks`() {
         // GIVEN
-        val game = Game(YELLOW)
+        val redPlayer = mock<Player> {
+            makingMove(RED, COLUMN_0)
+            makingMove(RED, COLUMN_0)
+            makingMove(RED, COLUMN_0)
+            makingMove(RED, COLUMN_0)
+        }
+        val yellowPlayer = mock<Player> {
+            makingMove(YELLOW, COLUMN_1)
+            makingMove(YELLOW, COLUMN_2)
+            makingMove(YELLOW, COLUMN_3)
+        }
+
+        val game = Game(redPlayer, yellowPlayer)
 
         // WHEN
         game
-                .player1(COLUMN_0)
-                .player2(COLUMN_1)
-                .player1(COLUMN_0)
-                .player2(COLUMN_2)
-                .player1(COLUMN_0)
-                .player2(COLUMN_3)
-                .player1(COLUMN_0)
+                .startGameWithRedPlayer() // red
+                .play()  // yellow
+                .play()  // red
+                .play()  // yellow
+                .play()  // red
+                .play()  // yellow
+                .play()  // red
 
         // THEN
         assertThat(game.status.isTerminated()).isTrue()
         val winner = (game.status as Game.GameTerminated).winner
-        assertThat(winner?.disk).isEqualTo(YELLOW)
+        assertThat(winner?.disk).isEqualTo(RED)
         assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_0,ROW_0), Vertical, 4) )
     }
 
@@ -83,12 +111,17 @@ class GameTest {
             r("   |   |   | R | Y | R |   |   |   ")
             r("   | R | R | Y | R | Y | Y |   |   ")
         }
-        val game = Game(RED , initialGrid)
+        val redPlayer = mock<Player> {
+            makingMove(RED, COLUMN_4)
+        }
+        val yellowPlayer = mock<Player> {}
+
+        val game = Game(redPlayer, yellowPlayer, initialGrid)
         assertThat(game.status.isTerminated()).isFalse()
 
         // WHEN
         game
-                .player1(COLUMN_4)
+                .startGameWithRedPlayer()
 
 
         // THEN
@@ -110,12 +143,12 @@ class GameTest {
             r("   |   |   | Y |   |   | Y |   |   ")
             r("   | R | R | R | R | Y | Y |   |   ")
         }
-        val game = Game(RED , initialGrid)
+        val game = Game(mock{} , mock {}, initialGrid)
         assertThat(game.status.isTerminated()).isTrue()
 
         // WHEN
         game
-                .player1(COLUMN_4)
+                .startGameWithRedPlayer()
 
         // THEN
         // exception thrown
@@ -133,12 +166,16 @@ class GameTest {
             r("   | Y | Y | R | Y | Y | R | R |   ")
             r("   | Y | R | Y | Y | R | Y | Y |   ")
         }
-        val game = Game(YELLOW , initialGrid)
+        val redPlayer = mock<Player> {}
+        val yellowPlayer = mock<Player> {
+            makingMove(YELLOW, COLUMN_1)
+        }
+        val game = Game(redPlayer, yellowPlayer, initialGrid)
         assertThat(game.status.isTerminated()).isFalse()
 
         // WHEN
         game
-                .player1(COLUMN_1)
+                .startGameWithYellowPlayer()
 
         // THEN
 
@@ -147,4 +184,11 @@ class GameTest {
         assertThat(winner).isNull()
     }
 
+
+    /**
+     * Utility function to declare a given player move
+     */
+    private fun KStubbing<Player>.makingMove(color: Disk, columnIndex: ColumnIndex) {
+        on { play( eq(color), any()) } doReturn columnIndex
+    }
 }

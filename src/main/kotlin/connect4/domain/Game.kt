@@ -5,65 +5,70 @@ package connect4.domain
  *
  */
 
-interface Player1 {
 
-    fun player1(playsAt : ColumnIndex) : Player2
-
-}
-
-
-interface Player2 {
-
-    fun player2(playsAt : ColumnIndex) : Player1
-
-}
 
 
 interface GameStatus {
     fun isTerminated() : Boolean
 }
 
+interface Player {
+    fun play(color : Disk, grid : Grid) : ColumnIndex
+}
 
+class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid()) {
 
-class Game
     // private constructor gives the 2 players colors (RED / YELLOW)
-    private constructor(val player1Disk : Disk, val player2Disk : Disk, val grid : Grid)
-    // a game implements both players
-    : Player1, Player2 {
+//    private constructor(val player1Disk : Disk, val player2Disk : Disk, val grid : Grid)
+//    // a game implements both players
+//    : Player1, Player2 {
 
-    /**
-     * Public Construct a game from the color used by player 1
-     * player 2 's color has the opposite color : RED => YELLOW, YELLOW => RED
-     */
-    constructor(player1Disk : Disk, grid : Grid = Grid()) : this(player1Disk ,
-            when(player1Disk == Disk.RED) {
-                true -> Disk.YELLOW
-                else -> Disk.RED
-            },
-            grid
-    )
+/**
+ * Public Construct a game from the color used by player 1
+ * player 2 's color has the opposite color : RED => YELLOW, YELLOW => RED
+ */
+//    constructor(player1Disk : Disk, grid : Grid = Grid()) : this(player1Disk ,
+//            when(player1Disk == Disk.RED) {
+//                true -> Disk.YELLOW
+//                else -> Disk.RED
+//            },
+//            grid
+//    )
 
+    private val playersAndColors = mapOf( Disk.RED to redPlayer, Disk.YELLOW to yellowPlayer )
+
+    var playingColor : Disk = Disk.RED
 
     var status : GameStatus = gameStatus()
         private set
 
 
-    /**
-     * player 1 makes its move
-     */
-    override fun player1(playsAt: ColumnIndex): Player2 {
-        play(player1Disk, playsAt)
+
+    fun startGameWithRedPlayer() : Game {
+        this.playingColor = Disk.RED
+        return play()
+    }
+
+    fun startGameWithYellowPlayer() : Game {
+        this.playingColor = Disk.YELLOW
+        return play()
+    }
+
+    fun play() : Game {
+        val playedColumnIndex = playersAndColors.getValue(playingColor).play(playingColor, grid)
+        play(playingColor, playedColumnIndex)
+        playingColor = nextPlayerColor()
         return this
     }
 
 
-    /**
-     * player 2 makes its move
-     */
-    override fun player2(playsAt: ColumnIndex): Player1 {
-        play(player2Disk, playsAt)
-        return this
+    private fun nextPlayerColor(): Disk {
+        return when(playingColor) {
+            Disk.RED -> Disk.YELLOW
+            else -> Disk.RED
+        }
     }
+
 
 
 
