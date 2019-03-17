@@ -85,7 +85,7 @@ class GameTest {
         val game = Game(redPlayer, yellowPlayer)
 
         // WHEN
-        game
+        var status = game
                 .startGameWithRedPlayer() // red
                 .play()  // yellow
                 .play()  // red
@@ -95,8 +95,8 @@ class GameTest {
                 .play()  // red
 
         // THEN
-        assertThat(game.status.isTerminated()).isTrue()
-        val winner = (game.status as Game.GameTerminated).winner
+        assertThat(game.isTerminated()).isTrue()
+        val winner = (status as GameTerminated).winner
         assertThat(winner?.color).isEqualTo(RED)
         assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_0,ROW_0), Vertical, 4) )
     }
@@ -117,7 +117,7 @@ class GameTest {
         val yellowPlayer = mock<Player> {}
 
         val game = Game(redPlayer, yellowPlayer, initialGrid)
-        assertThat(game.status.isTerminated()).isFalse()
+        assertThat(game.isTerminated()).isFalse()
 
         // WHEN
         game
@@ -125,8 +125,8 @@ class GameTest {
 
 
         // THEN
-        assertThat(game.status.isTerminated()).isTrue()
-        val winner = (game.status as Game.GameTerminated).winner
+        assertThat(game.isTerminated()).isTrue()
+        val winner = (game.status as GameTerminated).winner
         assertThat(winner?.color).isEqualTo(RED)
         assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_1,ROW_0), DownLeftUpRight, 4) )
     }
@@ -172,32 +172,13 @@ class GameTest {
         // WHEN
         game
                 .startGameWithRedPlayer()
+        game
                 .startGameWithYellowPlayer()
 
         // THEN
         // exception thrown
     }
 
-
-
-
-
-    @Test(expected = GameAlreadyStartedException::class)
-    fun `should not be play if game has not started yet`() {
-        // GIVEN
-        val redPlayer = mock<Player> {
-            makingMove(RED, COLUMN_4)
-        }
-        val yellowPlayer = mock<Player> { }
-        val game = Game(redPlayer , yellowPlayer)
-
-        // WHEN
-        game
-                .play()
-
-        // THEN
-        // exception thrown
-    }
 
 
 
@@ -217,7 +198,7 @@ class GameTest {
             makingMove(YELLOW, COLUMN_1)
         }
         val game = Game(redPlayer, yellowPlayer, initialGrid)
-        assertThat(game.status.isTerminated()).isFalse()
+        assertThat(game.isTerminated()).isFalse()
 
         // WHEN
         game
@@ -225,8 +206,8 @@ class GameTest {
 
         // THEN
 
-        assertThat(game.status.isTerminated()).isTrue()
-        val winner = (game.status as Game.GameTerminated).winner
+        assertThat(game.isTerminated()).isTrue()
+        val winner = (game.status as GameTerminated).winner
         assertThat(winner).isNull()
     }
 

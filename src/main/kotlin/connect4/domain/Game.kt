@@ -7,53 +7,99 @@ package connect4.domain
 
 
 
-
-interface GameStatus {
-    fun isTerminated() : Boolean
-}
-
 interface Player {
     fun play(color : Color, grid : Grid) : ColumnIndex
 }
+
+
+
+
+interface GameStatus {
+
+    fun isTerminated() : Boolean
+
+}
+
+
+interface GameInitialized : GameStatus {
+
+    override fun isTerminated() : Boolean = false
+
+    fun startGameWithRedPlayer() : GameRunning
+
+    fun startGameWithYellowPlayer() : GameRunning
+}
+
+
+
+interface GameRunning : GameStatus {
+
+    override fun isTerminated() : Boolean = false
+
+    fun play(): GameRunning
+}
+
+
+class Winner(val color : Color, val alignment: Alignment)
+
+
+class GameTerminated(val winner : Winner?) : GameRunning {
+
+    override fun isTerminated(): Boolean = true
+
+    override fun play(): GameRunning {
+        throw GameTerminatedException("Game is terminated !")
+    }
+}
+
 
 /**
  * A Game is composed of 2 players and a grid
  *
  */
-class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid()) {
+class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid()) : GameInitialized {
 
     private val playerByColor = mapOf( Color.RED to redPlayer, Color.YELLOW to yellowPlayer )
 
-    // next playing color
-    var playingColor : Color = Color.RED
+    // next play color
+    private var playingColor : Color = Color.RED
 
-    var status : GameStatus = GameInitialized()
+    var status : GameRunning? = null // null means 'not started'
         private set
 
 
 
-    fun startGameWithRedPlayer() : Game {
+    override fun startGameWithRedPlayer() : GameRunning {
         return startGame(Color.RED)
     }
 
-    fun startGameWithYellowPlayer() : Game {
+    override fun startGameWithYellowPlayer() : GameRunning {
         return startGame(Color.YELLOW)
     }
 
-    fun play() : Game {
-        val playedColumnIndex = playerByColor.getValue(playingColor).play(playingColor, grid)
-        play(playingColor, playedColumnIndex)
-        playingColor = nextPlayerColor()
-        return this
-    }
 
-    private fun startGame(color: Color): Game {
-        if (status !is GameInitialized) {
+    override fun isTerminated() : Boolean = status?.isTerminated() ?: false
+
+
+
+    private fun startGame(color: Color): GameRunning {
+        if (status != null) {
             throw GameAlreadyStartedException("Game is already started !")
         }
         this.playingColor = color
         return play()
     }
+
+
+    private fun play() : GameRunning {
+        val playedColumnIndex = playerByColor.getValue(playingColor).play(playingColor, grid)
+        val newStatus = play(playingColor, playedColumnIndex)
+        playingColor = nextPlayerColor()
+        status = newStatus
+        return newStatus
+    }
+
+
 
     private fun nextPlayerColor(): Color {
         return when(playingColor) {
@@ -62,37 +108,34 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
         }
     }
 
-
-
-
     /**
      * internal play : test status to check the game is already terminated or not.
      * makes the move
      * recompute game status
      */
-    private fun play(color: Color, position: ColumnIndex) {
-        if (status.isTerminated()) {
+    private fun play(color: Color, position: ColumnIndex) : GameRunning {
+        if (isTerminated()) {
             throw GameTerminatedException("Game is terminated !")
         }
 
         grid.insertDisk(position, color)
 
         // any winner ?
-        status = gameStatus()
+        return gameStatus()
     }
 
 
     /**
      * Computes the game status : whether a player has won or the grid is full
      */
-    private fun gameStatus() : GameStatus {
+    private fun gameStatus() : GameRunning {
         val winner = findWinner(grid)
 
         if (winner != null || grid.isFull()) {
             return GameTerminated(winner)
         }
 
-        return GameRunning()
+        return Running()
     }
 
 
@@ -110,21 +153,15 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
         return null
     }
 
-
-    class GameInitialized : GameStatus {
-        override fun isTerminated(): Boolean = false
-    }
-
-    class GameRunning : GameStatus {
-        override fun isTerminated(): Boolean = false
-    }
-
-    class GameTerminated(val winner : Winner?) : GameStatus {
-        override fun isTerminated(): Boolean = true
+    private inner class Running : GameRunning {
+        override fun play(): GameRunning {
+            return this@Game.play()
+        }
     }
 
 
-    class Winner(val color : Color, val alignment: Alignment)
+
+
 
 
 }
