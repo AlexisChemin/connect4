@@ -1,6 +1,6 @@
 package connect4.domain
 
-enum class Disk {
+enum class Color {
 
     YELLOW,
     RED

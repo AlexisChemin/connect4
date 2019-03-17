@@ -19,7 +19,7 @@ enum class AlignmentDirection {
 }
 
 /**
- * Alignment is what we want to compute. It has a 'start'ing position (a disk), a direction and a size (length)
+ * Alignment is what we want to compute. It has a 'start'ing position (a color), a direction and a size (length)
  */
 data class Alignment(val start: GridPosition, val direction: AlignmentDirection, var size: Int) {
 
@@ -49,15 +49,15 @@ class Alignments {
 
 
 /**
- * All alignments for a given disk
+ * All alignments for a given color
  */
-typealias AlignmentsByDisk = Map<Disk, Alignments>
+typealias AlignmentsByDisk = Map<Color, Alignments>
 
 
 
 class ComputeAlignments(grid: Grid) {
 
-    // what we're about to compute : 2-dimensions array of mapping (Disk -> Alignments)
+    // what we're about to compute : 2-dimensions array of mapping (Color -> Alignments)
     private var alignmentsGrid: Map<ColumnIndex, Map<RowIndex, AlignmentsByDisk>> = initAlignmentMap()
 
     // result goes here
@@ -81,7 +81,7 @@ class ComputeAlignments(grid: Grid) {
         for (column in ColumnIndex.values()) {
             for (row in RowIndex.values()) {
 
-                // skip 'no-disk' at  (column,row) position
+                // skip 'no-color' at  (column,row) position
                 val color = grid.getDiskAt(column, row) ?: continue
 
                 val position = GridPosition(column, row)
@@ -117,15 +117,16 @@ class ComputeAlignments(grid: Grid) {
      * - the existing alignment relative to this position (columnIndex, rowIndex) corresponding to the direction
      * - a newly alignment for this position+direction
      */
-    fun getAlignment(disk: Disk, position : GridPosition, direction: AlignmentDirection): Alignment {
+    fun getAlignment(color: Color, position : GridPosition, direction: AlignmentDirection): Alignment {
 
-        // find sibbling
-        val sibbling = getSibblingPosition(position, direction) ?:
+        // find adjacent position
+        val adjacent = getAdjacentPosition(position, direction) ?:
                 // none => return empty alignment
                 return emptyAlignment(position, direction)
 
-        // get all sibbling alignments
-        val alignments = getAlignments(disk, sibbling)
+        // get all adjacent alignments
+        val alignments = getAlignments(color, adjacent)
+
 
         // return the one of given direction (or new one)
         return alignments.get(direction) ?: emptyAlignment(position, direction)
@@ -133,9 +134,9 @@ class ComputeAlignments(grid: Grid) {
 
 
     /**
-     * get the sibbling position of the given position going in given 'direction'
+     * get the adjacent position of the given position going in given 'direction'
      */
-    private fun getSibblingPosition(position: GridPosition, direction: AlignmentDirection): GridPosition? {
+    private fun getAdjacentPosition(position: GridPosition, direction: AlignmentDirection): GridPosition? {
         var otherColumnIndex: ColumnIndex? = position.first
         var otherRowIndex: RowIndex? = position.second
         when (direction) {
@@ -167,21 +168,21 @@ class ComputeAlignments(grid: Grid) {
 
     /**
      * Shortcut to get the set of alignment corresponding to the given position (columnIndex, rowIndex)
-     * and given disk
+     * and given color
      */
-    private fun getAlignments(disk: Disk, position: GridPosition) =
-            alignmentsGrid[position.first]!![position.second]!![disk]!!
+    private fun getAlignments(color: Color, position: GridPosition) =
+            alignmentsGrid.getValue(position.first).getValue(position.second).getValue(color)
 
     /**
      * Initialisation of 'alignmentsGrid' that will be computed later
      */
     private fun initAlignmentMap(): Map<ColumnIndex, Map<RowIndex, AlignmentsByDisk>> {
-        val result = HashMap<ColumnIndex, Map<RowIndex, Map<Disk, Alignments>>>()
+        val result = HashMap<ColumnIndex, Map<RowIndex, Map<Color, Alignments>>>()
         for (columnIndex in ColumnIndex.values()) {
             val hashMap = HashMap<RowIndex, AlignmentsByDisk>()
             result[columnIndex] = hashMap
             for (rowIndex in RowIndex.values()) {
-                val hashMapRow: AlignmentsByDisk = mapOf(Disk.RED to Alignments(), Disk.YELLOW to Alignments())
+                val hashMapRow: AlignmentsByDisk = mapOf(Color.RED to Alignments(), Color.YELLOW to Alignments())
                 hashMap[rowIndex] = hashMapRow
             }
         }

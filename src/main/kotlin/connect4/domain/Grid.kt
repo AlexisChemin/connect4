@@ -18,11 +18,11 @@ class Grid {
         return columns.all{ it.isEmpty() }
     }
 
-    fun insertDisk(columnIndex: ColumnIndex, disk: Disk) {
-        columns[columnIndex.ordinal].insertDisk(disk)
+    fun insertDisk(columnIndex: ColumnIndex, color: Color) {
+        columns[columnIndex.ordinal].insertDisk(color)
     }
 
-    fun getDiskAt(columnIndex: ColumnIndex, rowIndex: RowIndex): Disk? {
+    fun getDiskAt(columnIndex: ColumnIndex, rowIndex: RowIndex): Color? {
         return columns[columnIndex.ordinal].getDiskAt(rowIndex)
     }
 
@@ -64,10 +64,10 @@ fun gridOf(block : GridBuilder.() -> Unit) : Grid {
  * Stores grid rows definition (through 'r' function) and build a grid in reverse order
  */
 class GridBuilder {
-    val rows = arrayListOf<Array<Disk?>>()
+    val rows = arrayListOf<Array<Color?>>()
 
     /**
-     * Defines a grid row from a piped string . set "R" for a 'RED' disk, "Y" for a 'YELLOW' dist
+     * Defines a grid row from a piped string . set "R" for a 'RED' color, "Y" for a 'YELLOW' dist
      * string can be like : "   | R | R | Y | R | Y | Y |   |   "
      */
     fun r(rowString : String) : GridBuilder {
@@ -75,7 +75,7 @@ class GridBuilder {
         if (diskList.size != 9) {
             throw RuntimeException("please provide a row line like \"   | R |   |   |   |   |   | Y |   \"")
         }
-        val row : Array<Disk?> = diskList.subList(1,8).map{ stringToDisk(it) }.toTypedArray()
+        val row : Array<Color?> = diskList.subList(1,8).map{ stringToDisk(it) }.toTypedArray()
         rows.add(row)
         return this
     }
@@ -96,10 +96,10 @@ class GridBuilder {
         return grid
     }
 
-    private fun stringToDisk(s: String): Disk? {
+    private fun stringToDisk(s: String): Color? {
         return when(s.trim()) {
-            "R" -> Disk.RED
-            "Y" -> Disk.YELLOW
+            "R" -> Color.RED
+            "Y" -> Color.YELLOW
             else -> null
         }
     }

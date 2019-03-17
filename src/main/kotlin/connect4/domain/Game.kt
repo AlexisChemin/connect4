@@ -13,59 +13,52 @@ interface GameStatus {
 }
 
 interface Player {
-    fun play(color : Disk, grid : Grid) : ColumnIndex
+    fun play(color : Color, grid : Grid) : ColumnIndex
 }
 
+/**
+ * A Game is composed of 2 players and a grid
+ *
+ */
 class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid()) {
 
-    // private constructor gives the 2 players colors (RED / YELLOW)
-//    private constructor(val player1Disk : Disk, val player2Disk : Disk, val grid : Grid)
-//    // a game implements both players
-//    : Player1, Player2 {
+    private val playerByColor = mapOf( Color.RED to redPlayer, Color.YELLOW to yellowPlayer )
 
-/**
- * Public Construct a game from the color used by player 1
- * player 2 's color has the opposite color : RED => YELLOW, YELLOW => RED
- */
-//    constructor(player1Disk : Disk, grid : Grid = Grid()) : this(player1Disk ,
-//            when(player1Disk == Disk.RED) {
-//                true -> Disk.YELLOW
-//                else -> Disk.RED
-//            },
-//            grid
-//    )
+    // next playing color
+    var playingColor : Color = Color.RED
 
-    private val playersAndColors = mapOf( Disk.RED to redPlayer, Disk.YELLOW to yellowPlayer )
-
-    var playingColor : Disk = Disk.RED
-
-    var status : GameStatus = gameStatus()
+    var status : GameStatus = GameInitialized()
         private set
 
 
 
     fun startGameWithRedPlayer() : Game {
-        this.playingColor = Disk.RED
-        return play()
+        return startGame(Color.RED)
     }
 
     fun startGameWithYellowPlayer() : Game {
-        this.playingColor = Disk.YELLOW
-        return play()
+        return startGame(Color.YELLOW)
     }
 
     fun play() : Game {
-        val playedColumnIndex = playersAndColors.getValue(playingColor).play(playingColor, grid)
+        val playedColumnIndex = playerByColor.getValue(playingColor).play(playingColor, grid)
         play(playingColor, playedColumnIndex)
         playingColor = nextPlayerColor()
         return this
     }
 
+    private fun startGame(color: Color): Game {
+        if (status !is GameInitialized) {
+            throw GameAlreadyStartedException("Game is already started !")
+        }
+        this.playingColor = color
+        return play()
+    }
 
-    private fun nextPlayerColor(): Disk {
+    private fun nextPlayerColor(): Color {
         return when(playingColor) {
-            Disk.RED -> Disk.YELLOW
-            else -> Disk.RED
+            Color.RED -> Color.YELLOW
+            else -> Color.RED
         }
     }
 
@@ -77,12 +70,12 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
      * makes the move
      * recompute game status
      */
-    private fun play(disk: Disk, position: ColumnIndex) {
+    private fun play(color: Color, position: ColumnIndex) {
         if (status.isTerminated()) {
             throw GameTerminatedException("Game is terminated !")
         }
 
-        grid.insertDisk(position, disk)
+        grid.insertDisk(position, color)
 
         // any winner ?
         status = gameStatus()
@@ -109,7 +102,7 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
 
         alignment?.let {
             // alignment starts with the winner color
-            // ==> just get the disk at the 'start' position
+            // ==> just get the color at the 'start' position
             val disk = grid.getDiskAt(it.start.first, it.start.second)
 
             return disk?.let { Winner(disk, alignment) }
@@ -118,6 +111,9 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
     }
 
 
+    class GameInitialized : GameStatus {
+        override fun isTerminated(): Boolean = false
+    }
 
     class GameRunning : GameStatus {
         override fun isTerminated(): Boolean = false
@@ -128,9 +124,10 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
     }
 
 
-    class Winner(val disk : Disk, val alignment: Alignment)
+    class Winner(val color : Color, val alignment: Alignment)
 
 
 }
 
 class GameTerminatedException(message: String) : RuntimeException(message)
+class GameAlreadyStartedException(message: String) : RuntimeException(message)

@@ -6,7 +6,7 @@ import assertk.assertions.isFalse
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import connect4.domain.ColumnIndex.*
-import connect4.domain.Disk.*
+import connect4.domain.Color.*
 import connect4.domain.RowIndex.*
 import org.junit.Test
 

@@ -8,7 +8,7 @@ import assertk.assertions.isTrue
 import com.nhaarman.mockito_kotlin.*
 import connect4.domain.AlignmentDirection.*
 import connect4.domain.ColumnIndex.*
-import connect4.domain.Disk.*
+import connect4.domain.Color.*
 import connect4.domain.RowIndex.*
 import org.junit.Test
 
@@ -97,7 +97,7 @@ class GameTest {
         // THEN
         assertThat(game.status.isTerminated()).isTrue()
         val winner = (game.status as Game.GameTerminated).winner
-        assertThat(winner?.disk).isEqualTo(RED)
+        assertThat(winner?.color).isEqualTo(RED)
         assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_0,ROW_0), Vertical, 4) )
     }
 
@@ -127,7 +127,7 @@ class GameTest {
         // THEN
         assertThat(game.status.isTerminated()).isTrue()
         val winner = (game.status as Game.GameTerminated).winner
-        assertThat(winner?.disk).isEqualTo(RED)
+        assertThat(winner?.color).isEqualTo(RED)
         assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_1,ROW_0), DownLeftUpRight, 4) )
     }
 
@@ -143,16 +143,62 @@ class GameTest {
             r("   |   |   | Y |   |   | Y |   |   ")
             r("   | R | R | R | R | Y | Y |   |   ")
         }
-        val game = Game(mock{} , mock {}, initialGrid)
-        assertThat(game.status.isTerminated()).isTrue()
+        val redPlayer = mock<Player> {
+            makingMove(RED, COLUMN_4)
+        }
+
+         val game = Game(redPlayer , mock {}, initialGrid)
 
         // WHEN
         game
                 .startGameWithRedPlayer()
+                .play()
 
         // THEN
         // exception thrown
     }
+
+
+
+    @Test(expected = GameAlreadyStartedException::class)
+    fun `should not be able to restart a started game`() {
+        // GIVEN
+        val redPlayer = mock<Player> {
+            makingMove(RED, COLUMN_4)
+        }
+        val yellowPlayer = mock<Player> { }
+        val game = Game(redPlayer , yellowPlayer)
+
+        // WHEN
+        game
+                .startGameWithRedPlayer()
+                .startGameWithYellowPlayer()
+
+        // THEN
+        // exception thrown
+    }
+
+
+
+
+
+    @Test(expected = GameAlreadyStartedException::class)
+    fun `should not be play if game has not started yet`() {
+        // GIVEN
+        val redPlayer = mock<Player> {
+            makingMove(RED, COLUMN_4)
+        }
+        val yellowPlayer = mock<Player> { }
+        val game = Game(redPlayer , yellowPlayer)
+
+        // WHEN
+        game
+                .play()
+
+        // THEN
+        // exception thrown
+    }
+
 
 
     @Test
@@ -188,7 +234,7 @@ class GameTest {
     /**
      * Utility function to declare a given player move
      */
-    private fun KStubbing<Player>.makingMove(color: Disk, columnIndex: ColumnIndex) {
+    private fun KStubbing<Player>.makingMove(color: Color, columnIndex: ColumnIndex) {
         on { play( eq(color), any()) } doReturn columnIndex
     }
 }

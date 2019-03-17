@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
-import connect4.domain.Disk.*
+import connect4.domain.Color.*
 import connect4.domain.RowIndex.*
 import org.junit.Test
 
@@ -56,7 +56,7 @@ class ColumnTest {
         assertThat(column.height()).isEqualTo(ColumnHeight)
 
         // WHEN
-        //              add one more disk
+        //              add one more color
         column.insertDisk(YELLOW)
 
         // THEN

@@ -9,19 +9,19 @@ import java.util.*
 
 class Column {
 
-    private var disks = Stack<Disk>()
+    private var disks = Stack<Color>()
 
 
-    fun insertDisk(disk: Disk) {
+    fun insertDisk(color: Color) {
         if (isFull()) {
             throw IndexOutOfBoundsException()
         }
-        disks.push(disk)
+        disks.push(color)
     }
 
 
 
-    fun getDiskAt(rowIndex : RowIndex) : Disk? {
+    fun getDiskAt(rowIndex : RowIndex) : Color? {
         val stackIndex = rowIndex.ordinal
         if (stackIndex >= height()) {
             return null
