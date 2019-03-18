@@ -20,7 +20,7 @@ class GridTest {
         // GIVEN
 
         // WHEN
-        val grid = Grid()
+        val grid = GridImpl()
 
         // THEN
         assertThat(grid.isEmpty()).isTrue()
@@ -31,7 +31,7 @@ class GridTest {
     @Test
     fun `should be able to insert a disk in a Grid`() {
         // GIVEN
-        val grid = Grid()
+        val grid = GridImpl()
 
         // WHEN
         grid.insertDisk(COLUMN_3, YELLOW)
@@ -45,7 +45,7 @@ class GridTest {
     @Test
     fun `should be able to insert serveral disks in a Grid`() {
         // GIVEN
-        val grid = Grid()
+        val grid = GridImpl()
 
         // WHEN
         grid.insertDisk(COLUMN_3, YELLOW)
@@ -62,8 +62,8 @@ class GridTest {
     @Test
     fun `should be able to get the disk at given position`() {
         // GIVEN
-        //              a three Disks Grid
-        val grid = Grid()
+        //              a three Disks GridImpl
+        val grid = GridImpl()
         grid.insertDisk(COLUMN_1, YELLOW)
         grid.insertDisk(COLUMN_1, RED)
         grid.insertDisk(COLUMN_0, RED)
@@ -88,7 +88,7 @@ class GridTest {
     fun `should return null when getting a disk at a position over -column's height-`() {
         // GIVEN
         //              a three Disks Column
-        val grid = Grid()
+        val grid = GridImpl()
         grid.insertDisk(COLUMN_3, YELLOW)
 
 

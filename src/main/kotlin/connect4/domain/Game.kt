@@ -2,36 +2,40 @@ package connect4.domain
 
 
 /**
- *
+ * A game Player must be able to play a given color on a given grid.
+ * Playing consists in selecting a grid column
  */
-
-
 
 interface Player {
     fun play(color : Color, grid : Grid) : ColumnIndex
 }
 
 
-
-
+/**
+ * different game status : Initialized -> Running -> Terminated
+ */
 interface GameStatus {
 
     fun isTerminated() : Boolean
 
 }
 
-
+/**
+ * In Initialized state, a game can be started
+ */
 interface GameInitialized : GameStatus {
 
     override fun isTerminated() : Boolean = false
 
-    fun startGameWithRedPlayer() : GameRunning
+    fun startGameByPlayingRed() : GameRunning
 
-    fun startGameWithYellowPlayer() : GameRunning
+    fun startGameByPlayingYellow() : GameRunning
 }
 
 
-
+/**
+ * While running, it is possible to 'play' the game
+ */
 interface GameRunning : GameStatus {
 
     override fun isTerminated() : Boolean = false
@@ -39,10 +43,9 @@ interface GameRunning : GameStatus {
     fun play(): GameRunning
 }
 
-
-class Winner(val color : Color, val alignment: Alignment)
-
-
+/**
+ * Terminated state may hold a winner
+ */
 class GameTerminated(val winner : Winner?) : GameRunning {
 
     override fun isTerminated(): Boolean = true
@@ -54,26 +57,38 @@ class GameTerminated(val winner : Winner?) : GameRunning {
 
 
 /**
- * A Game is composed of 2 players and a grid
+ * A Winner is a 'winning' color and gives the 'winning alignment'
+ */
+class Winner(val color : Color, val alignment: Alignment)
+
+
+/**
+ * A Game is composed of 2 players and a mutable grid
  *
  */
-class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid()) : GameInitialized {
+class Game (redPlayer : Player, yellowPlayer : Player, private val gridImpl : GridImpl = GridImpl()) : GameInitialized {
 
+    // stores players by color
     private val playerByColor = mapOf( Color.RED to redPlayer, Color.YELLOW to yellowPlayer )
 
-    // next play color
+    // who plays next ? => playingColor
     private var playingColor : Color = Color.RED
 
-    var status : GameRunning? = null // null means 'not started'
+    // internal game status, null means 'not started yet'
+    var status : GameRunning? = null
         private set
 
+    // read-only view of the grid
+    val grid : Grid
+        get() = gridImpl
 
 
-    override fun startGameWithRedPlayer() : GameRunning {
+
+    override fun startGameByPlayingRed() : GameRunning {
         return startGame(Color.RED)
     }
 
-    override fun startGameWithYellowPlayer() : GameRunning {
+    override fun startGameByPlayingYellow() : GameRunning {
         return startGame(Color.YELLOW)
     }
 
@@ -92,7 +107,7 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
 
 
     private fun play() : GameRunning {
-        val playedColumnIndex = playerByColor.getValue(playingColor).play(playingColor, grid)
+        val playedColumnIndex = playerByColor.getValue(playingColor).play(playingColor, gridImpl)
         val newStatus = play(playingColor, playedColumnIndex)
         playingColor = nextPlayerColor()
         status = newStatus
@@ -118,7 +133,7 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
             throw GameTerminatedException("Game is terminated !")
         }
 
-        grid.insertDisk(position, color)
+        gridImpl.insertDisk(position, color)
 
         // any winner ?
         return gameStatus()
@@ -126,12 +141,12 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
 
 
     /**
-     * Computes the game status : whether a player has won or the grid is full
+     * Computes the game status : whether a player has won or the gridImpl is full
      */
     private fun gameStatus() : GameRunning {
-        val winner = findWinner(grid)
+        val winner = findWinner(gridImpl)
 
-        if (winner != null || grid.isFull()) {
+        if (winner != null || gridImpl.isFull()) {
             return GameTerminated(winner)
         }
 
@@ -139,7 +154,7 @@ class Game (redPlayer : Player, yellowPlayer : Player, val grid : Grid = Grid())
     }
 
 
-    private fun findWinner(grid: Grid): Winner? {
+    private fun findWinner(grid: GridImpl): Winner? {
         // fetch alignments, find one with a length of at least 4
         val alignment = ComputeAlignments(grid).result.find {  it.size >= 4 }
 

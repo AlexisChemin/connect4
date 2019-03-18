@@ -32,7 +32,7 @@ class GameTest {
 
         // WHEN
         game
-                .startGameWithRedPlayer()
+                .startGameByPlayingRed()
                 .play()
 
         // THEN
@@ -56,7 +56,7 @@ class GameTest {
 
         // WHEN
         game
-                .startGameWithYellowPlayer()
+                .startGameByPlayingYellow()
                 .play()
 
         // THEN
@@ -86,7 +86,7 @@ class GameTest {
 
         // WHEN
         var status = game
-                .startGameWithRedPlayer() // red
+                .startGameByPlayingRed() // red
                 .play()  // yellow
                 .play()  // red
                 .play()  // yellow
@@ -121,7 +121,7 @@ class GameTest {
 
         // WHEN
         game
-                .startGameWithRedPlayer()
+                .startGameByPlayingRed()
 
 
         // THEN
@@ -151,7 +151,7 @@ class GameTest {
 
         // WHEN
         game
-                .startGameWithRedPlayer()
+                .startGameByPlayingRed()
                 .play()
 
         // THEN
@@ -171,9 +171,9 @@ class GameTest {
 
         // WHEN
         game
-                .startGameWithRedPlayer()
+                .startGameByPlayingRed()
         game
-                .startGameWithYellowPlayer()
+                .startGameByPlayingYellow()
 
         // THEN
         // exception thrown
@@ -202,7 +202,7 @@ class GameTest {
 
         // WHEN
         game
-                .startGameWithYellowPlayer()
+                .startGameByPlayingYellow()
 
         // THEN
 

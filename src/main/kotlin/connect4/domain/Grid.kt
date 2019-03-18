@@ -3,7 +3,18 @@ package connect4.domain
 import java.lang.RuntimeException
 
 
-class Grid {
+interface Grid {
+    /**
+     * Returns true if all grid's columns are empty
+     */
+    fun isEmpty(): Boolean
+
+    fun getDiskAt(columnIndex: ColumnIndex, rowIndex: RowIndex): Color?
+    fun size(): Int
+    fun isFull(): Boolean
+}
+
+class GridImpl : Grid {
 
 
 
@@ -14,7 +25,7 @@ class Grid {
     /**
      * Returns true if all grid's columns are empty
      */
-    fun isEmpty(): Boolean {
+    override fun isEmpty(): Boolean {
         return columns.all{ it.isEmpty() }
     }
 
@@ -22,15 +33,15 @@ class Grid {
         columns[columnIndex.ordinal].insertDisk(color)
     }
 
-    fun getDiskAt(columnIndex: ColumnIndex, rowIndex: RowIndex): Color? {
+    override fun getDiskAt(columnIndex: ColumnIndex, rowIndex: RowIndex): Color? {
         return columns[columnIndex.ordinal].getDiskAt(rowIndex)
     }
 
-    fun size(): Int {
+    override fun size(): Int {
         return columns.sumBy { it.height() }
     }
 
-    fun isFull(): Boolean {
+    override fun isFull(): Boolean {
         return columns.all { it.isFull() }
     }
 
@@ -53,7 +64,7 @@ class Grid {
  *      }
  *
  */
-fun gridOf(block : GridBuilder.() -> Unit) : Grid {
+fun gridOf(block : GridBuilder.() -> Unit) : GridImpl {
     val gridBuilder = GridBuilder()
     gridBuilder.apply(block)
     return gridBuilder.build()
@@ -82,8 +93,8 @@ class GridBuilder {
 
 
 
-    fun build() : Grid {
-        val grid = Grid()
+    fun build() : GridImpl {
+        val grid = GridImpl()
         rows.reversed().forEach {
             for ((index, value) in it.withIndex()) {
                 if (value == null) {

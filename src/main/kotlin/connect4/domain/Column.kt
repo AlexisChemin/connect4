@@ -4,7 +4,7 @@ import java.util.*
 
 
 /**
- * A Column of the Grid. Up to 'ColumnHeight' Disks can be inserted into a Column
+ * A Column of the GridImpl. Up to 'ColumnHeight' Disks can be inserted into a Column
  */
 
 class Column {

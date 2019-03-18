@@ -15,7 +15,7 @@ class ComputeAlignmentsTest {
     @Test
     fun `should compute alignments on an empty grid`() {
         // GIVEN
-        val grid = Grid()
+        val grid = GridImpl()
 
         // WHEN
         var alignments = ComputeAlignments(grid).result
