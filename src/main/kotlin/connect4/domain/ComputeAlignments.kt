@@ -82,7 +82,7 @@ class ComputeAlignments(grid: Grid) {
             for (row in RowIndex.values()) {
 
                 // skip 'no-color' at  (column,row) position
-                val color = grid.getDiskAt(column, row) ?: continue
+                val color = grid.getDiskColorAt(column, row) ?: continue
 
                 val position = GridPosition(column, row)
 
@@ -133,38 +133,6 @@ class ComputeAlignments(grid: Grid) {
     }
 
 
-    /**
-     * get the adjacent position of the given position going in given 'direction'
-     */
-    private fun getAdjacentPosition(position: GridPosition, direction: AlignmentDirection): GridPosition? {
-        var otherColumnIndex: ColumnIndex? = position.first
-        var otherRowIndex: RowIndex? = position.second
-        when (direction) {
-            UpLeftDownRight -> {
-                otherColumnIndex = position.first.leftward()
-                otherRowIndex = position.second.uppward()
-            }
-            Horizontal -> {
-                otherColumnIndex = position.first.leftward()
-                otherRowIndex = position.second
-            }
-            DownLeftUpRight -> {
-                otherColumnIndex = position.first.leftward()
-                otherRowIndex = position.second.downward()
-            }
-            Vertical -> {
-                otherColumnIndex = position.first
-                otherRowIndex = position.second.downward()
-            }
-        }
-
-        if (otherColumnIndex == null || otherRowIndex == null) {
-            return null
-        }
-
-        return GridPosition(otherColumnIndex, otherRowIndex)
-    }
-
 
     /**
      * Shortcut to get the set of alignment corresponding to the given position (columnIndex, rowIndex)
@@ -196,6 +164,54 @@ class ComputeAlignments(grid: Grid) {
             Alignment(position, direction, 0)
 
 }
+
+
+/**
+ * get the adjacent position of the given position going in given 'direction'
+ */
+fun getAdjacentPosition(position: GridPosition, direction: AlignmentDirection): GridPosition? {
+    var otherColumnIndex: ColumnIndex? = position.first
+    var otherRowIndex: RowIndex? = position.second
+    when (direction) {
+        UpLeftDownRight -> {
+            otherColumnIndex = position.first.leftward()
+            otherRowIndex = position.second.uppward()
+        }
+        Horizontal -> {
+            otherColumnIndex = position.first.leftward()
+            otherRowIndex = position.second
+        }
+        DownLeftUpRight -> {
+            otherColumnIndex = position.first.leftward()
+            otherRowIndex = position.second.downward()
+        }
+        Vertical -> {
+            otherColumnIndex = position.first
+            otherRowIndex = position.second.downward()
+        }
+    }
+
+    if (otherColumnIndex == null || otherRowIndex == null) {
+        return null
+    }
+
+    return GridPosition(otherColumnIndex, otherRowIndex)
+}
+
+
+//
+//
+//operator fun Alignment.contains(position : GridPosition): Boolean {
+//    var alignmentPosition = this.start.
+//    var index = 0
+//    while( index < size && alignmentPosition != position ) {
+//        var nextPosition = getAdjacentPosition(alignmentPosition, direction)
+//
+//    }
+//    return false
+//}
+
+
 
 private fun <E : Alignment> HashSet<E>.addIfSizedEnough(alignment: E) {
     if (alignment.size > 1) {

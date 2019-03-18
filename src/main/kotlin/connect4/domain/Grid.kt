@@ -9,9 +9,10 @@ interface Grid {
      */
     fun isEmpty(): Boolean
 
-    fun getDiskAt(columnIndex: ColumnIndex, rowIndex: RowIndex): Color?
+    fun getDiskColorAt(columnIndex: ColumnIndex, rowIndex: RowIndex): Color?
     fun size(): Int
     fun isFull(): Boolean
+    fun freeColumns(): List<ColumnIndex>
 }
 
 class GridImpl : Grid {
@@ -33,7 +34,7 @@ class GridImpl : Grid {
         columns[columnIndex.ordinal].insertDisk(color)
     }
 
-    override fun getDiskAt(columnIndex: ColumnIndex, rowIndex: RowIndex): Color? {
+    override fun getDiskColorAt(columnIndex: ColumnIndex, rowIndex: RowIndex): Color? {
         return columns[columnIndex.ordinal].getDiskAt(rowIndex)
     }
 
@@ -43,6 +44,10 @@ class GridImpl : Grid {
 
     override fun isFull(): Boolean {
         return columns.all { it.isFull() }
+    }
+
+    override fun freeColumns(): List<ColumnIndex> {
+        return ColumnIndex.values().filter { !columns[it.ordinal].isFull() }.toList()
     }
 
 }

@@ -71,9 +71,9 @@ class GridTest {
 
         // WHEN
         //              get disks
-        val disk0 = grid.getDiskAt(COLUMN_1, ROW_0)
-        val disk1 = grid.getDiskAt(COLUMN_1, ROW_1)
-        val disk2 = grid.getDiskAt(COLUMN_0, ROW_0)
+        val disk0 = grid.getDiskColorAt(COLUMN_1, ROW_0)
+        val disk1 = grid.getDiskColorAt(COLUMN_1, ROW_1)
+        val disk2 = grid.getDiskColorAt(COLUMN_0, ROW_0)
 
 
         // THEN
@@ -94,8 +94,8 @@ class GridTest {
 
         // WHEN
         //              get disks from position 3
-        val disk3 = grid.getDiskAt(COLUMN_3, ROW_1) // row over height
-        val disk4 = grid.getDiskAt(COLUMN_0, ROW_0)
+        val disk3 = grid.getDiskColorAt(COLUMN_3, ROW_1) // row over height
+        val disk4 = grid.getDiskColorAt(COLUMN_0, ROW_0)
 
         // THEN
         assertThat(disk3).isNull()

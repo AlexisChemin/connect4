@@ -161,7 +161,7 @@ class Game (redPlayer : Player, yellowPlayer : Player, private val gridImpl : Gr
         alignment?.let {
             // alignment starts with the winner color
             // ==> just get the color at the 'start' position
-            val disk = grid.getDiskAt(it.start.first, it.start.second)
+            val disk = grid.getDiskColorAt(it.start.first, it.start.second)
 
             return disk?.let { Winner(disk, alignment) }
         }

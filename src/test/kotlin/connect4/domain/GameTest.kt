@@ -36,8 +36,8 @@ class GameTest {
                 .play()
 
         // THEN
-        assertThat(game.grid.getDiskAt(COLUMN_0, ROW_0)).isEqualTo(RED)
-        assertThat(game.grid.getDiskAt(COLUMN_5, ROW_0)).isEqualTo(YELLOW)
+        assertThat(game.grid.getDiskColorAt(COLUMN_0, ROW_0)).isEqualTo(RED)
+        assertThat(game.grid.getDiskColorAt(COLUMN_5, ROW_0)).isEqualTo(YELLOW)
     }
 
 
@@ -60,8 +60,8 @@ class GameTest {
                 .play()
 
         // THEN
-        assertThat(game.grid.getDiskAt(COLUMN_5, ROW_0)).isEqualTo(YELLOW)
-        assertThat(game.grid.getDiskAt(COLUMN_0, ROW_0)).isEqualTo(RED)
+        assertThat(game.grid.getDiskColorAt(COLUMN_5, ROW_0)).isEqualTo(YELLOW)
+        assertThat(game.grid.getDiskColorAt(COLUMN_0, ROW_0)).isEqualTo(RED)
     }
 
 
