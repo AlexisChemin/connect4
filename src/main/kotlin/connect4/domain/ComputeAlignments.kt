@@ -21,12 +21,27 @@ enum class AlignmentDirection {
 /**
  * Alignment is what we want to compute. It has a 'start'ing position (a color), a direction and a size (length)
  */
-data class Alignment(val start: GridPosition, val direction: AlignmentDirection, var size: Int) {
+data class Alignment(val start: GridPosition, val direction: AlignmentDirection) {
 
-    fun increase(): Alignment {
-        size += 1
+    private val positions : MutableSet<GridPosition> = mutableSetOf(start)
+
+    var size: Int = positions.size
+        private set
+
+    fun increaseWith(position: GridPosition): Alignment {
+        positions.add( position )
+        size = positions.size
         return this
     }
+
+
+    /**
+     * Returns true if the given position is contained within this alignment
+     */
+    operator fun contains(position : GridPosition): Boolean {
+        return positions.contains(position)
+    }
+
 }
 
 /**
@@ -41,8 +56,8 @@ class Alignments {
         return alignmentByDirection[direction]
     }
 
-    fun set(alignment: Alignment) {
-        alignmentByDirection[alignment.direction] = alignment
+    fun set(direction: AlignmentDirection, alignment: Alignment) {
+        alignmentByDirection[direction] = alignment
     }
 
 }
@@ -87,19 +102,19 @@ class ComputeAlignments(grid: Grid) {
                 val position = GridPosition(column, row)
 
                 // compute alignments at this (column,row) position
-                // ==> increase existing alignment or increase a new empty alignment
-                val upLeftDownRightAlignment    = getAlignment(color, position, UpLeftDownRight).increase()
-                val horizontalAlignment         = getAlignment(color, position, Horizontal).increase()
-                val downRightAlignmentAlignment = getAlignment(color, position, DownLeftUpRight).increase()
-                val verticalAlignment           = getAlignment(color, position, Vertical).increase()
+                // ==> increaseWith existing alignment or increaseWith a new empty alignment
+                val upLeftDownRightAlignment    = getAlignment(color, position, UpLeftDownRight).increaseWith(position)
+                val horizontalAlignment         = getAlignment(color, position, Horizontal).increaseWith(position)
+                val downRightAlignmentAlignment = getAlignment(color, position, DownLeftUpRight).increaseWith(position)
+                val verticalAlignment           = getAlignment(color, position, Vertical).increaseWith(position)
 
 
                 // set new alignments for this (column,row)
                 val alignments = getAlignments(color, position)
-                alignments.set(upLeftDownRightAlignment)
-                alignments.set(horizontalAlignment)
-                alignments.set(downRightAlignmentAlignment)
-                alignments.set(verticalAlignment)
+                alignments.set(UpLeftDownRight, upLeftDownRightAlignment)
+                alignments.set(Horizontal, horizontalAlignment)
+                alignments.set(DownLeftUpRight, downRightAlignmentAlignment)
+                alignments.set(Vertical, verticalAlignment)
 
                 // store any alignment whose size is greater than 1
                 all.addIfSizedEnough(upLeftDownRightAlignment)
@@ -161,7 +176,7 @@ class ComputeAlignments(grid: Grid) {
 
 
     private fun emptyAlignment(position: GridPosition, direction: AlignmentDirection) =
-            Alignment(position, direction, 0)
+            Alignment(position, direction)
 
 }
 
@@ -198,18 +213,6 @@ fun getAdjacentPosition(position: GridPosition, direction: AlignmentDirection): 
     return GridPosition(otherColumnIndex, otherRowIndex)
 }
 
-
-//
-//
-//operator fun Alignment.contains(position : GridPosition): Boolean {
-//    var alignmentPosition = this.start.
-//    var index = 0
-//    while( index < size && alignmentPosition != position ) {
-//        var nextPosition = getAdjacentPosition(alignmentPosition, direction)
-//
-//    }
-//    return false
-//}
 
 
 

@@ -30,11 +30,11 @@ fun main(args: Array<String>) {
         status = status.play()
     }
 
-    Console.showGrid(game.grid)
+    Console.showGrid(game.grid, status.winner?.alignment)
 
     // any winner ?
     status.winner?.let {
-        println( it.color.name  + " wins at (" + (it.alignment.start.first.ordinal+1) + "," + (it.alignment.start.second.ordinal+1) + ")" )
+        println( it.color.name  + " has won " )
     } ?: run {
         println("No winner")
     }

@@ -98,7 +98,8 @@ class GameTest {
         assertThat(game.isTerminated()).isTrue()
         val winner = (status as GameTerminated).winner
         assertThat(winner?.color).isEqualTo(RED)
-        assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_0,ROW_0), Vertical, 4) )
+//        assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_0,ROW_0), Vertical, 4) )
+        assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_0,ROW_0), Vertical) )
     }
 
 
@@ -128,7 +129,8 @@ class GameTest {
         assertThat(game.isTerminated()).isTrue()
         val winner = (game.status as GameTerminated).winner
         assertThat(winner?.color).isEqualTo(RED)
-        assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_1,ROW_0), DownLeftUpRight, 4) )
+        assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_1,ROW_0), DownLeftUpRight) )
+//        assertThat(winner?.alignment).isEqualTo( Alignment(GridPosition(COLUMN_1,ROW_0), DownLeftUpRight, 4) )
     }
 
 

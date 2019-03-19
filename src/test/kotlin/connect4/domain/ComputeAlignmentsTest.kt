@@ -28,6 +28,34 @@ class ComputeAlignmentsTest {
 
 
     @Test
+    fun `all aligned positions are contained in the alignment`() {
+
+        // GIVEN
+        val grid = gridOf {
+            r("   |   |   |   |   |   |   |   |   ")
+            r("   |   |   |   |   |   |   |   |   ")
+            r("   | R |   |   | Y | Y | Y | Y |   ")
+        }
+
+
+        // WHEN
+        var alignments = ComputeAlignments(grid).result
+
+        // THEN
+        assertThat(alignments).hasSize(1)
+
+        val alignment = alignments.first()
+
+        assertThat(alignment.size).isEqualTo(4)
+        assertThat(alignment.contains(GridPosition(COLUMN_3, ROW_0))).isTrue()
+        assertThat(alignment.contains(GridPosition(COLUMN_4, ROW_0))).isTrue()
+        assertThat(alignment.contains(GridPosition(COLUMN_5, ROW_0))).isTrue()
+        assertThat(alignment.contains(GridPosition(COLUMN_6, ROW_0))).isTrue()
+    }
+
+
+
+    @Test
     fun `should detect horizontal alignments`() {
 
         // GIVEN
@@ -43,8 +71,8 @@ class ComputeAlignmentsTest {
 
         // THEN
         assertThat(alignments).containsAll(
-                Alignment(GridPosition(COLUMN_0, ROW_0), Horizontal, 2),
-                Alignment(GridPosition(COLUMN_3, ROW_0), Horizontal, 4)
+                Alignment(GridPosition(COLUMN_0, ROW_0), Horizontal),
+                Alignment(GridPosition(COLUMN_3, ROW_0), Horizontal)
         )
     }
 
@@ -66,9 +94,9 @@ class ComputeAlignmentsTest {
 
         // THEN
         assertThat(alignments).containsAll(
-                Alignment(GridPosition(COLUMN_0, ROW_0), Vertical, 3),
-                Alignment(GridPosition(COLUMN_3, ROW_0), Vertical, 2),
-                Alignment(GridPosition(COLUMN_5, ROW_0), Vertical, 3)
+                Alignment(GridPosition(COLUMN_0, ROW_0), Vertical),
+                Alignment(GridPosition(COLUMN_3, ROW_0), Vertical),
+                Alignment(GridPosition(COLUMN_5, ROW_0), Vertical)
         )
     }
 
@@ -90,10 +118,10 @@ class ComputeAlignmentsTest {
 
         // THEN
         assertThat(alignments).containsAll(
-                Alignment(GridPosition(COLUMN_2, ROW_0), DownLeftUpRight, 3),
-                Alignment(GridPosition(COLUMN_2, ROW_2), UpLeftDownRight, 3),
-                Alignment(GridPosition(COLUMN_2, ROW_1), UpLeftDownRight, 2),
-                Alignment(GridPosition(COLUMN_3, ROW_0), DownLeftUpRight, 2)
+                Alignment(GridPosition(COLUMN_2, ROW_0), DownLeftUpRight),
+                Alignment(GridPosition(COLUMN_2, ROW_2), UpLeftDownRight),
+                Alignment(GridPosition(COLUMN_2, ROW_1), UpLeftDownRight),
+                Alignment(GridPosition(COLUMN_3, ROW_0), DownLeftUpRight)
         )
     }
 

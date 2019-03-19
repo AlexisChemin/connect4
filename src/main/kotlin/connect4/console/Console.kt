@@ -16,20 +16,33 @@ class Console  {
             for (row in RowIndex.values().reversed()) {
                 print("   |")
                 for (column in values()) {
-                    print(" ")
                     var diskColor = grid.getDiskColorAt(column, row)
+
+                    var inAlignment = inAlignment(alignment, column, row)
+                    if (inAlignment) print("(") else print(" ")
+
                     when (diskColor) {
                         Color.RED -> print("R")
                         Color.YELLOW -> print("Y")
                         else -> print(" ")
                     }
-                    print(" |")
+
+                    if (inAlignment) print(")|") else print(" |")
                 }
                 println()
             }
             println("   =============================")
             println("     1   2   3   4   5   6   7")
         }
+
+        private fun inAlignment(alignment: Alignment?, column: ColumnIndex, row: RowIndex): Boolean{
+            alignment?.let{
+                return it.contains(GridPosition(column, row))
+            }
+            return false
+        }
+
+
 
         fun askColumn(freeColumns: List<ColumnIndex>): ColumnIndex {
 
