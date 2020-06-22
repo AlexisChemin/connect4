@@ -14,8 +14,7 @@
         <assertk.version>0.13</assertk.version>
         <kotlin.version>1.2.10</kotlin.version>
         <junit.version>4.12</junit.version>
-        <!--<main.class>hello.HelloKt</main.class>-->
-        <main.class>app</main.class>
+        <main.class>AppKt</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

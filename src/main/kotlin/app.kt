@@ -3,7 +3,6 @@ import connect4.console.Console
 import connect4.console.ConsolePlayer
 import connect4.domain.Game
 import connect4.domain.GameTerminated
-import connect4.domain.gridOf
 
 fun main(args: Array<String>) {
 
